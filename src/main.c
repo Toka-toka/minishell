@@ -7,8 +7,8 @@ int main (int argc, char **argv, char **envp)
 
     path = NULL;
     path = getcwd(NULL, 0);
-    free(path);
     printf("path = %s\n", path);
+    free(path);
     while (envp[i] != NULL)
     {
         printf("envp[%d] = %s\n", i, envp[i]);
