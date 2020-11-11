@@ -9,4 +9,18 @@
 #include <unistd.h>
 #include <string.h>
 
+typedef struct      s_envp
+{
+    char            *name;
+    char            *value;
+    struct s_envp   *next;
+}                   t_envp;
+
+typedef struct      s_all
+{
+    t_envp         *envp;
+}                   t_all;
+
+void    add_var(t_all *all, const char *str);
+
 #endif

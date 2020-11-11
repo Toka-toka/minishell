@@ -14,18 +14,22 @@ FLAGS = -Wall -Wextra -Werror
 
 NAME = minishell
 
-SRC = 	src/*.c
+SRC = 	src/main.c\
+		src/envp.c\
+
 
 OBJ = $(SRC:.c=.o)
 
 LIBFT = libft.a
 
+HEADER = includes/minishell.h
+
 all: $(NAME)
 
 $(NAME): $(OBJ) $(HEADER)
-	make -C libft
-	mv libft/$(LIBFT) .
-	gcc $(FLAGS) -g -o $(NAME) $(OBJ) $(LIBFT)
+#	make -C libft
+#	mv libft/$(LIBFT) .
+	gcc $(FLAGS) -g -o $(NAME) $(OBJ) $(LIBFT) $(HEADER)
 
 clean:
 	rm -f $(OBJ)
