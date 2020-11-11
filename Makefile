@@ -10,7 +10,7 @@
 #                                                                              #
 # **************************************************************************** #
 
-FLAGS = -Wall -Wextra -Werror
+#FLAGS = -Wall -Wextra -Werror
 
 NAME = minishell
 
@@ -27,9 +27,9 @@ HEADER = includes/minishell.h
 all: $(NAME)
 
 $(NAME): $(OBJ) $(HEADER)
-#	make -C libft
-#	mv libft/$(LIBFT) .
-	gcc $(FLAGS) -g -o $(NAME) $(OBJ) $(LIBFT) $(HEADER)
+	make -C libft
+	mv libft/$(LIBFT) .
+	gcc $(FLAGS) -g -o $(NAME) $(SRC) $(LIBFT) $(HEADER)
 
 clean:
 	rm -f $(OBJ)

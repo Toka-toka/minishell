@@ -1,52 +1,59 @@
 #include "../includes/minishell.h"
 
+void	ft_putstr(char *str)
+{
+	while (*str != '\0')
+	{
+		write(1, str, 1);
+		str++;
+	}
+}
+
 void	**make_copy_envp(t_all *all, char **envp)
 {
 	int i;
 	int len;
 	char **copy;
-	static t_envp *env;
 	t_envp *temp;
-//	char abc;
+	char	**arr;
 
 	i = 0;
-/*	while (envp[i] != NULL)
-		i++;
-	copy = (char **)malloc(sizeof(char *) * i);
-	i = 0;
-	while (envp[i] != NULL)
-		copy[i++] = ft_strdup(envp[i]);
-	copy[i] = NULL; */
-//	scanf("%c", abc);
-	env = (t_envp *)malloc(sizeof(t_envp));
-    env->value = ft_strdup(envp[i]);
-    env->next = NULL;
-	all->envp = env;
-	i++;
-//	env = NULL;
+	all->envp->value = NULL;
 	while (envp[i] != NULL)
 	{
 		add_var(all, envp[i]);
 		i++;
 	}
 	temp = all->envp;
-//	scanf("%c", abc);
-	while (temp->next != NULL)
+	i = 0;
+/*	while (temp != NULL)
 	{
-		printf("list cont = %s\n", temp->value);
+		printf("%d |%s=%s\n%d |%s\n", i, temp->name, temp->value, i, envp[i]);
+		putstr(temp->value);
+		putstr("\n");
 		temp = temp->next;
+		i++;
+	}*/
+//	print_envp(all, 1);
+	printf("all = %p\n", all);
+	arr = arr_from_list(all);
+	while (arr[i] != NULL)
+	{
+		ft_putstr(arr[i]);
+		ft_putstr("\n");
+		i++;
 	}
 }
 
 int main (int argc, char **argv, char **envp)
 {
     t_all	all;
-	int		i = 0;
-    char	*path;
-	int abc;
+	t_envp	env;
 
 //	scanf("%d", &abc);
-	make_copy_envp(&all, envp);
+	all.envp = &env;
+	if (envp != NULL && envp[0] != NULL) // подумать над этим
+		make_copy_envp(&all, envp); // вернуть листы
   //  path = NULL;
  //   path = getcwd(NULL, 0);
   //  printf("path = %s\n", path);

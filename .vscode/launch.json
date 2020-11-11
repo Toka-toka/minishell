@@ -15,7 +15,6 @@
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
-            "miDebuggerPath": "C:/MinGW/etc/gdb/gdb.exe",
             "setupCommands": [
                 {
                     "description": "Включить автоматическое форматирование для gdb",
