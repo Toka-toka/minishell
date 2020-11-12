@@ -29,7 +29,7 @@ all: $(NAME)
 $(NAME): $(OBJ) $(HEADER)
 	make -C libft
 	mv libft/$(LIBFT) .
-	gcc $(FLAGS) -g -o $(NAME) $(SRC) $(LIBFT) $(HEADER)
+	gcc $(FLAGS) -g $(SRC) $(LIBFT) $(HEADER)
 
 clean:
 	rm -f $(OBJ)

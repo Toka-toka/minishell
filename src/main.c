@@ -36,13 +36,19 @@ void	**make_copy_envp(t_all *all, char **envp)
 	}*/
 //	print_envp(all, 1);
 	printf("all = %p\n", all);
-	arr = arr_from_list(all);
-	while (arr[i] != NULL)
-	{
-		ft_putstr(arr[i]);
-		ft_putstr("\n");
-		i++;
-	}
+//	arr = arr_from_list(all);
+//	while (arr[i] != NULL)
+//	{
+//		ft_putstr(arr[i]);
+//		ft_putstr("\n");
+//		i++;
+//	}
+	printf("------------\nsearch res = %s\n", search_var(all, "USER"));
+	del_var(all, "TERM_SESSION_ID");
+	printf("------------\nsearch res = %s\n", search_var(all, "USER"));
+	print_envp(all, 0);
+	add_var(all, "var1=");
+	print_envp(all, 0);
 }
 
 char	*str_plus_char(char *src, char c)
@@ -127,11 +133,7 @@ int main (int argc, char **argv, char **envp)
 {
     t_all	all;
 	t_envp	env;
-	/*
-    int		i = 0;
-    char	*path;
 
-//	scanf("%d", &abc);
 	all.envp = &env;
 	if (envp != NULL && envp[0] != NULL) // подумать над этим
 		make_copy_envp(&all, envp); // вернуть листы
@@ -148,14 +150,14 @@ int main (int argc, char **argv, char **envp)
 	char	*array;
 	char	c;
 
-	while (1)
+/*	while (1)
 	{
 		print_start_command();
 		array = read_array();
 		division_command(array);
 		//printf("command = %s\n", array);
 		free(array);
-	}
+	}*/
 
 	/*
 	printf("\n\n");

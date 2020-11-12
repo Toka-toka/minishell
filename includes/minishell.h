@@ -25,5 +25,7 @@ void	ft_putstr(char *str);
 void    add_var(t_all *all, const char *str);
 void    print_envp(t_all *all, int i);
 char    **arr_from_list(t_all *all);
+char    *search_var(t_all *all, char *name);
+void    del_var(t_all *all, char *name);
 
 #endif
