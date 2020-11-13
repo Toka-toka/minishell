@@ -6,7 +6,7 @@
 #    By: white <white@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/05/14 17:29:46 by sedric            #+#    #+#              #
-#    Updated: 2020/11/11 22:31:30 by white            ###   ########.fr        #
+#    Updated: 2020/11/13 19:48:52 by white            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ NAME = minishell
 
 SRC = 	src/main.c\
 		src/envp.c\
-		src/our_command.c\
+		src/parsing_input.c\
 
 OBJ = $(SRC:.c=.o)
 

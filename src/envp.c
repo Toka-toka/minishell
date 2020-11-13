@@ -9,52 +9,24 @@ void    add_var(t_all *all, const char *str) // поиск по имени?
     int     i;
     
     i = 0;
-    while (str[i] != '=' && str[i] != '\0')
+    while (str[i] != '=')
         i++;
-    if (str[i] == '=')
+    new = (t_envp *)malloc(sizeof(t_envp));
+    new->name = ft_substr(str, 0, i);
+    new->value = ft_strdup(str + i + 1);
+    new->next = NULL;
+    if (all->envp->value == NULL) //что будет если удалить все и начать записывать заново
+        all->envp = new;
+    else
     {
-        new = (t_envp *)malloc(sizeof(t_envp));
-        new->name = ft_substr(str, 0, i);
-        new->value = ft_strdup(str + i + 1);
-        new->next = NULL;
-        if (all->envp->value == NULL) //что будет если удалить все и начать записывать заново
-            all->envp = new;
-        else
-        {
-            current = all->envp;
-            while (current->next != NULL && ft_memcmp(str, current->value, i) != 0)
-                current = current->next;
-            current->next = new;
-        }
+        current = all->envp;
+        while (current->next != NULL && ft_memcmp(str, current->value, i) != 0)
+            current = current->next;
+        current->next = new;
     }
 }
 
 // удаление элемента (если параметр NULL то удаление всего списка)
-
-void    del_var(t_all *all, char *name)
-{
-    t_envp  *current;
-    t_envp  *prev;
-    int     len;
-
-    len = ft_strlen(name);
-    current = all->envp;
-    while (current != NULL)
-    {
-        if (ft_memcmp(name, current->name, len) == 0)
-        {
-            free(current->name);
-            free(current->value);
-            if (current == all->envp)
-                all->envp = current->next;
-            else
-                prev->next = current->next;
-            free(current);
-        }
-        prev = current;
-        current = current->next;
-    }
-}
 
 void    print_envp(t_all *all, int i) // печать всего списка (с приставкой и без)
 {
@@ -100,21 +72,4 @@ char    **arr_from_list(t_all *all) // создание массива из сп
     }
     arr[i] = NULL;
     return(arr);
-}
-
-char    *search_var(t_all *all, char *name)
-{
-    t_envp  *current;
-    char    *temp;
-    int     len;
-
-    len = ft_strlen(name);
-    current = all->envp;
-    while (current != NULL)
-    {
-        if (ft_memcmp(name, current->name, len) == 0)
-            return(current->value);
-        current = current->next;
-    }
-    return(NULL);
 }
