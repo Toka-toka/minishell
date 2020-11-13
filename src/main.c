@@ -36,7 +36,7 @@ int main (int argc, char **argv, char **envp)
 	{
 		print_start_command(&all);
 		array = read_array();
-		division_command(array);
+		division_command(&all, array);
 		free(array);
 	}
     return(0);

@@ -28,9 +28,10 @@ char    **arr_from_list(t_all *all);
 char    *search_var(t_all *all, char *name);
 void    del_var(t_all *all, char *name);
 void    ft_unset(t_all *all, char **arg);
+void    ft_env(t_all *all, char **arg);
 
 void	print_start_command(t_all *all);
 char	*read_array(void);
-void division_command(char *array);
+void division_command(t_all *all, char *array);
 
 #endif

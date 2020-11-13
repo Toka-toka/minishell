@@ -44,16 +44,32 @@ char	*read_array(void)
 void	print_start_command(t_all *all)
 {
 	int len;
+	char	*name;
+	char	*pwd;
 	
 	write(1, "\033[1;31m", 7);	// RED
 	write(1, "┌─[", 7);
 	write(1, "\033[1;34m", 7);	// BLUE
-	len = ft_strlen(search_var(all, "NAME"));
-	write(1, search_var(all, "NAME"), len);
+	name = search_var(all, "NAME");
+	if (name != NULL)
+		len = ft_strlen(name);
+	else
+	{
+		name = "None";
+		len = 4;
+	}
+	write(1, name, len);
 	write(1, "\033[1;31m", 7);	// RED
-	len = ft_strlen(search_var(all, "PWD"));
+	pwd = search_var(all, "PWD");
+	if (pwd != NULL)
+		len = ft_strlen(pwd);
+	else
+	{
+		pwd = "None";
+		len = 4;
+	}
 	write(1, "][", 2);
-	write(1, search_var(all, "PWD"), len);
+	write(1, pwd, len);
 	write(1, "]\n", 2);
 	write(1, "└──╼ ", 14);
 	write(1, "\033[1;33m", 7);	// YELLOW
@@ -102,11 +118,12 @@ void	number_word(char *array, int i)
 	printf("ALL NUMBER = %d\n", number);
 }
 
-void division_command(char *array)
+void division_command(t_all *all, char *array)
 {
 	char	*command;
 	char	*arg;
 	int		i;
+	char	*args[4]; // добавил для аргументов
 
 	command = NULL;
 	arg = NULL;
@@ -127,7 +144,11 @@ void division_command(char *array)
 	else
 		printf("Arg = %s\n", arg);
 
-
+	if (strcmp(command, "env") == 0)
+	{
+		arg = ft_strjoin("env ", arg);
+		ft_env(all,  ft_split(arg, ' '));
+	}
 	// EXPORT
 	if (strcmp(command, "export") == 0)
 	{
@@ -136,7 +157,12 @@ void division_command(char *array)
 	// UNSET
 	else if (strcmp(command, "unset") == 0)
 	{
-		printf("This is your unset command\n");
+		args[0] = "unset"; // добавил чтобы появились аргументы
+		args[1] = "NAME";
+		args[2] = "PWD";
+		args[3] = NULL;
+
+		ft_unset(all, args); 
 	}
 	else
 	{
