@@ -17,6 +17,7 @@ NAME = minishell
 SRC = 	src/main.c\
 		src/envp.c\
 		src/parsing_input.c\
+		src/our_command.c\
 
 OBJ = $(SRC:.c=.o)
 

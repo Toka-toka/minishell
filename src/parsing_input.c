@@ -41,14 +41,20 @@ char	*read_array(void)
 	return(array);
 }
 
-void	print_start_command(void)
+void	print_start_command(t_all *all)
 {
+	int len;
+	
 	write(1, "\033[1;31m", 7);	// RED
 	write(1, "┌─[", 7);
 	write(1, "\033[1;34m", 7);	// BLUE
-	write(1, "toka-toka", 9);
+	len = ft_strlen(search_var(all, "NAME"));
+	write(1, search_var(all, "NAME"), len);
 	write(1, "\033[1;31m", 7);	// RED
-	write(1, "]─[pwd]\n", 10);
+	len = ft_strlen(search_var(all, "PWD"));
+	write(1, "][", 2);
+	write(1, search_var(all, "PWD"), len);
+	write(1, "]\n", 2);
 	write(1, "└──╼ ", 14);
 	write(1, "\033[1;33m", 7);	// YELLOW
 	write(1, "$", 1);
