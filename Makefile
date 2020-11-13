@@ -16,7 +16,7 @@ NAME = minishell
 
 SRC = 	src/main.c\
 		src/envp.c\
-
+		src/our_command.c\
 
 OBJ = $(SRC:.c=.o)
 
@@ -29,7 +29,7 @@ all: $(NAME)
 $(NAME): $(OBJ) $(HEADER)
 	make -C libft
 	mv libft/$(LIBFT) .
-	gcc $(FLAGS) -g $(SRC) $(LIBFT) $(HEADER)
+	gcc $(FLAGS) -g -o $(NAME) $(SRC) $(LIBFT) $(HEADER)
 
 clean:
 	rm -f $(OBJ)

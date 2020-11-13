@@ -15,7 +15,7 @@ void	**make_copy_envp(t_all *all, char **envp)
 	int len;
 	char **copy;
 	t_envp *temp;
-	char	**arr;
+	char	*arr[4];
 
 	i = 0;
 	all->envp->value = NULL;
@@ -35,7 +35,6 @@ void	**make_copy_envp(t_all *all, char **envp)
 		i++;
 	}*/
 //	print_envp(all, 1);
-	printf("all = %p\n", all);
 //	arr = arr_from_list(all);
 //	while (arr[i] != NULL)
 //	{
@@ -43,12 +42,13 @@ void	**make_copy_envp(t_all *all, char **envp)
 //		ft_putstr("\n");
 //		i++;
 //	}
-	printf("------------\nsearch res = %s\n", search_var(all, "USER"));
-	del_var(all, "TERM_SESSION_ID");
-	printf("------------\nsearch res = %s\n", search_var(all, "USER"));
-	print_envp(all, 0);
-	add_var(all, "var1=");
-	print_envp(all, 0);
+	arr[0] = "unset";
+	arr[1] = "123";
+	arr[2] = "abc=";
+	arr[3] = "NAME";
+	printf("NAME = %s\n", search_var(all, "NAME"));
+	ft_unset(all, arr);
+	printf("NAME = %s\n", search_var(all, "NAME"));
 }
 
 char	*str_plus_char(char *src, char c)

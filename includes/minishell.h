@@ -27,5 +27,6 @@ void    print_envp(t_all *all, int i);
 char    **arr_from_list(t_all *all);
 char    *search_var(t_all *all, char *name);
 void    del_var(t_all *all, char *name);
+void    ft_unset(t_all *all, char **arg);
 
 #endif
