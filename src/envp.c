@@ -22,9 +22,17 @@ void    add_var(t_all *all, const char *str) // поиск по имени?
         else
         {
             current = all->envp;
-            while (current->next != NULL && ft_memcmp(str, current->value, i) != 0)
+            while (current->next != NULL && ft_memcmp(str, current->name, i) != 0)
                 current = current->next;
-            current->next = new;
+            if (ft_memcmp(str, current->name, i) == 0)
+            {
+                free(current->value);
+                current->value = new->value;
+                free(new);
+                free(new->name);
+            }
+            else
+                current->next = new;
         }
     }
 }

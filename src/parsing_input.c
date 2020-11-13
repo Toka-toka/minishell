@@ -152,7 +152,11 @@ void division_command(t_all *all, char *array)
 	// EXPORT
 	if (strcmp(command, "export") == 0)
 	{
-		printf("This is your export command\n");
+		args[0] = "export"; // добавил чтобы появились аргументы
+		args[1] = "NAME=123";
+		args[2] = "PWD=456";
+		args[3] = NULL;
+		ft_export(all, args);
 	}
 	// UNSET
 	else if (strcmp(command, "unset") == 0)

@@ -21,6 +21,23 @@ int     var_name_check(char *name, int j) // j = 0 для unset и j = 1 для 
     return(flag);
 }
 
+void    ft_export(t_all *all, char **arg)
+{
+    int i;
+    
+    i = 0;
+    if (arg[1] == NULL)
+        print_envp(all, 1);
+    else
+    {
+        while (arg[i] != NULL)
+        {
+            add_var(all, arg[i]);
+            i++;
+        }
+    }
+}
+
 void    ft_unset(t_all *all, char **arg)
 {
     int i;
