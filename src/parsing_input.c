@@ -68,7 +68,7 @@ void	print_start_command(t_all *all)
 		pwd = "None";
 		len = 4;
 	}
-	write(1, "][", 2);
+	write(1, "]-[", 3);
 	write(1, pwd, len);
 	write(1, "]\n", 2);
 	write(1, "└──╼ ", 14);
@@ -123,7 +123,7 @@ void division_command(t_all *all, char *array)
 	char	*command;
 	char	*arg;
 	int		i;
-	char	*args[4]; // добавил для аргументов
+	char	*args[5]; // добавил для аргументов
 
 	command = NULL;
 	arg = NULL;
@@ -150,21 +150,26 @@ void division_command(t_all *all, char *array)
 		ft_env(all,  ft_split(arg, ' '));
 	}
 	// EXPORT
-	if (strcmp(command, "export") == 0)
+
+	else if (strcmp(command, "pwd") == 0)
+		ft_pwd(all, args);
+	else if (strcmp(command, "export") == 0)
 	{
 		args[0] = "export"; // добавил чтобы появились аргументы
-		args[1] = "NAME=123";
+		args[1] = "NAME=VADIM";
 		args[2] = "PWD=456";
-		args[3] = NULL;
+		args[3] = "ERT-=123";
+		args[4] = NULL;
 		ft_export(all, args);
 	}
 	// UNSET
 	else if (strcmp(command, "unset") == 0)
 	{
 		args[0] = "unset"; // добавил чтобы появились аргументы
-		args[1] = "NAME";
-		args[2] = "PWD";
-		args[3] = NULL;
+		args[1] = "N AME";
+		args[2] = "1PWD";
+		args[3] = "PWD=";
+		args[4] = NULL;
 
 		ft_unset(all, args); 
 	}

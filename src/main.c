@@ -12,10 +12,10 @@ void	ft_putstr(char *str)
 void	**make_copy_envp(t_all *all, char **envp)
 {
 	int i;
-	t_envp *temp;
+//	t_envp *temp;
 
 	i = 0;
-	all->envp->value = NULL;
+	all->envp = NULL;
 	while (envp[i] != NULL)
 	{
 		add_var(all, envp[i]);
@@ -26,10 +26,10 @@ void	**make_copy_envp(t_all *all, char **envp)
 int main (int argc, char **argv, char **envp)
 {
     t_all	all;
-	t_envp	env;
+//	t_envp	env;
 	char	*array;
 
-	all.envp = &env;
+//	all.envp = &env;
 	if (envp != NULL && envp[0] != NULL) // подумать над этим
 		make_copy_envp(&all, envp);	
 	while (1)

@@ -17,7 +17,7 @@ void    add_var(t_all *all, const char *str) // поиск по имени?
         new->name = ft_substr(str, 0, i);
         new->value = ft_strdup(str + i + 1);
         new->next = NULL;
-        if (all->envp->value == NULL) //что будет если удалить все и начать записывать заново
+        if (all->envp == NULL) //что будет если удалить все и начать записывать заново
             all->envp = new;
         else
         {
@@ -28,8 +28,8 @@ void    add_var(t_all *all, const char *str) // поиск по имени?
             {
                 free(current->value);
                 current->value = new->value;
-                free(new);
                 free(new->name);
+                free(new);
             }
             else
                 current->next = new;

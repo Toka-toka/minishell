@@ -30,6 +30,7 @@ void    del_var(t_all *all, char *name);
 void    ft_unset(t_all *all, char **arg);
 void    ft_env(t_all *all, char **arg);
 void    ft_export(t_all *all, char **arg);
+void    ft_pwd(t_all *all, char **arg);
 
 void	print_start_command(t_all *all);
 char	*read_array(void);

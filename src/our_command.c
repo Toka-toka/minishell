@@ -3,22 +3,19 @@
 int     var_name_check(char *name, int j) // j = 0 для unset и j = 1 для export
 {
     int i;
-    int flag;
 
     i = 0;
-    flag = 1;
-    while (name[i] != '\0')
+    if (ft_isdigit(name[0]) != 0)
+        return(1);
+    while (name[i] != '\0' && name[i] != '=')
     {
-        if (j == 0 && name[i] == '=')
-        {
-            flag = 1;
-            break;
-        }
-        if (name[i] < '0' || name[i] > '9')
-            flag = 0;
+        if (ft_isalnum(name[i]) == 0 && name[i] != '_')
+            return(1);
         i++;
     }
-    return(flag);
+    if (j == 0 && name[i] == '=')
+        return(1);
+    return(0); // 
 }
 
 void    ft_export(t_all *all, char **arg)
@@ -32,7 +29,14 @@ void    ft_export(t_all *all, char **arg)
     {
         while (arg[i] != NULL)
         {
-            add_var(all, arg[i]);
+            if (var_name_check(arg[i], 1) == 1)
+            {
+                ft_putstr_fd("export: ", 2); // куда нужно направлять ошибки...?
+                ft_putstr_fd(arg[i], 2);
+                ft_putstr_fd(": not a valid identifier\n", 2);  
+            }
+            else
+                add_var(all, arg[i]);
             i++;
         }
     }
@@ -55,11 +59,12 @@ void    ft_unset(t_all *all, char **arg)
         {
             if (var_name_check(arg[i], 0) == 1)
             {
-                ft_putstr("unset: "); // куда нужно направлять ошибки...?
-                ft_putstr(arg[i]);
-                ft_putstr(": not a valid identifier\n");  
+                ft_putstr_fd("unset: ", 2); // куда нужно направлять ошибки...?
+                ft_putstr_fd(arg[i], 2);
+                ft_putstr_fd(": not a valid identifier\n", 2);  
             }
-            del_var(all, arg[i]);
+            else
+                del_var(all, arg[i]);
             i++;
         }
     }
@@ -82,3 +87,13 @@ void    ft_env(t_all *all, char **arg)
 // env
 
 //pwd
+
+void    ft_pwd(t_all *all, char **arg)
+{
+    char *path;
+
+    path = getcwd(NULL, 0);
+    ft_putstr_fd(path, 1);
+    ft_putstr_fd("\n", 1);
+    free(path);
+}
