@@ -66,7 +66,7 @@ int		number_word(char *array, int i)
 
 	word_flag = 1;
 	arg_flag = 0;
-	number = 1;			// Сразу включаю NULL в длину двумерного массива
+	number = 0;			// Сразу включаю NULL в длину двумерного массива
 	while (array[i] != '\0')
 	{
 		if (array[i] == '\"')
@@ -81,7 +81,7 @@ int		number_word(char *array, int i)
 			word_flag = 1;
 		i++;
 	}
-	printf("ALL NUMBER ARG = %d\n", number);
+	//printf("ALL NUMBER ARG = %d\n", number);
 	return (number);
 }
 
@@ -95,14 +95,14 @@ char	**read_arg(char *array, int *i)
 	int		j;
 
 	len = number_word(array, *i);					// Не работает с | и ;
-	arg = (char **)malloc(len * sizeof(char *));
+	arg = (char **)malloc((len + 1) * sizeof(char *));
 	if (arg == NULL)
 		return (NULL);
 	j = 0;
 	while (j < len)
 	{	
+		arg[j] = NULL;
 		*i = read_word(array, &arg[j], *i);
-		printf("WORD = %s\n", arg[j]);
 		j++;
 	}
 	arg[j] = NULL;
@@ -150,7 +150,6 @@ void	division_command(t_all *all, char *array)
 									//		ЗАВЕРШЕНИЕМ ПРОЦЕССА
 
 		command = ft_strjoin("/bin/", command);		// Добавить перебор путей
-		printf("\"%s\"\n", command);
 		if ((pid = fork()) == 0)
 			if ((execve(command, arg, 0)) == -1)	// Завершение процессов после неправильного выполнения
 				return ;
