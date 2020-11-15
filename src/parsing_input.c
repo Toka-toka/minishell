@@ -66,8 +66,8 @@ int		number_word(char *array, int i)
 
 	word_flag = 1;
 	arg_flag = 0;
-	number = 0;			// Сразу включаю NULL в длину двумерного массива
-	while (array[i] != '\0')
+	number = 0;
+	while (array[i] != '\0' && array[i] != ';' && array[i] != '|')
 	{
 		if (array[i] == '\"')
 			arg_flag = !arg_flag;
@@ -139,15 +139,16 @@ void	division_command(t_all *all, char *array)
 	command = NULL;
 	if (array == NULL)
 		return ;
-	read_word(array, &command, 0);
+	read_word(array, &command, i);
 	arg = read_arg(array, &i);
 
 	if (check_our_command(all, arg, command) == 0)
 	{
-		pid_t	pid;				// [!!!]	!!!!	[!!!]
+		pid_t	pid;				//		[!!!]	!!!!	[!!!]
 		int		status;				//		РАЗОБРАТЬСЯ С СОЗДАНИЕМ ПРОЦЕССА
 									//		ВОЗРАЩАЕМЫМ ЗНАЧЕНИЕМ
 									//		ЗАВЕРШЕНИЕМ ПРОЦЕССА
+									//		[!!!]	!!!!	[!!!]
 
 		command = ft_strjoin("/bin/", command);		// Добавить перебор путей
 		if ((pid = fork()) == 0)

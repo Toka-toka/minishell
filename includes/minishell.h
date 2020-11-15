@@ -34,7 +34,7 @@ void    ft_pwd(t_all *all, char **arg);
 void    ft_cd(t_all *all, char **arg);
 
 void	print_color_start(t_all *all);
-char	*read_array(void);
+char	*read_array(char *flag_end_command);
 void    division_command(t_all *all, char *array);
 char	*str_plus_char(char *src, char c);
 

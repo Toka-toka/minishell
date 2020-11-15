@@ -23,7 +23,7 @@ void	**make_copy_envp(t_all *all, char **envp)
 	}
 }
 
-char	*read_array(void)
+char	*read_array(char *flag_end_command)
 {
 	char	*array;
 	char	c;
@@ -32,9 +32,14 @@ char	*read_array(void)
 	while (read(0, &c, 1))
 	{
 		if (c == '\n')
+		{
+			*flag_end_command = 1;
+			break;
+		}
+		else if (c == ';')
 			break;
 		array = str_plus_char(array, c);
-		if (c == '|' || c == ';')
+		if (c == '|' )
 			break;
 	}
 	return(array);
@@ -43,14 +48,20 @@ char	*read_array(void)
 int main (int argc, char **argv, char **envp)
 {
     t_all	all;
+	char	flag_end_command;
 	char	*array;
-
+	
 	if (envp != NULL && envp[0] != NULL)	// Подумать над этим
-		make_copy_envp(&all, envp);	
+		make_copy_envp(&all, envp);
+	flag_end_command = 1;
 	while (1)
 	{
-		print_color_start(&all);
-		array = read_array();				// Поместил эту функцию в main
+		if (flag_end_command == 1)
+		{
+			print_color_start(&all);
+			flag_end_command = 0;
+		}
+		array = read_array(&flag_end_command);				// Поместил эту функцию в main
 		division_command(&all, array);
 		free(array);
 	}
