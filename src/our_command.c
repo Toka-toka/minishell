@@ -97,3 +97,18 @@ void    ft_pwd(t_all *all, char **arg)
     ft_putstr_fd("\n", 1);
     free(path);
 }
+
+void    ft_cd(t_all *all, char **arg)
+{
+    char **str;
+
+    if (chdir(arg[1]) == 0)      //В максимально простом варианте это выглядит так
+    {
+        str = (char **)malloc(sizeof(char *) * 3);
+        str[0] = "export";
+        str[1] = ft_strjoin("PWD=", arg[1]);
+        str[2] = NULL;
+        ft_export(all, str);
+        free(str);
+    }
+}

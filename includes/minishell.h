@@ -31,9 +31,11 @@ void    ft_unset(t_all *all, char **arg);
 void    ft_env(t_all *all, char **arg);
 void    ft_export(t_all *all, char **arg);
 void    ft_pwd(t_all *all, char **arg);
+void    ft_cd(t_all *all, char **arg);
 
-void	print_start_command(t_all *all);
+void	print_color_start(t_all *all);
 char	*read_array(void);
-void division_command(t_all *all, char *array);
+void    division_command(t_all *all, char *array);
+char	*str_plus_char(char *src, char c);
 
 #endif

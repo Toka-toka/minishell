@@ -24,88 +24,54 @@ char	*str_plus_char(char *src, char c)
 	return (dest);
 }
 
-
-char	*read_array(void)
+/*
+	Функция чтения слова / слов в ковычках. Сохраняет аргумент в **command.
+	Возвращает индекс текущего элемента.
+*/
+int		read_word(char *array, char **command, int i)
 {
-	char	*array;
-	char	c;
+	char	quote_flag;			// Если найдена ковычка = 1
 
-	array = NULL;
-	while (read(0, &c, 1))
-	{
-		
-		array = str_plus_char(array, c);
-		if (c == '\n'|| c == '|' || c == ';')
-			break;
-	}
-	return(array);
-}
-
-void	print_start_command(t_all *all)
-{
-	int len;
-	char	*name;
-	char	*pwd;
-	
-	write(1, "\033[1;31m", 7);	// RED
-	write(1, "┌─[", 7);
-	write(1, "\033[1;34m", 7);	// BLUE
-	name = search_var(all, "NAME");
-	if (name != NULL)
-		len = ft_strlen(name);
-	else
-	{
-		name = "None";
-		len = 4;
-	}
-	write(1, name, len);
-	write(1, "\033[1;31m", 7);	// RED
-	pwd = search_var(all, "PWD");
-	if (pwd != NULL)
-		len = ft_strlen(pwd);
-	else
-	{
-		pwd = "None";
-		len = 4;
-	}
-	write(1, "]-[", 3);
-	write(1, pwd, len);
-	write(1, "]\n", 2);
-	write(1, "└──╼ ", 14);
-	write(1, "\033[1;33m", 7);	// YELLOW
-	write(1, "$", 1);
-	write(1, "\033[0m", 4);		// Reset	
-}
-
-int		read_word(char *array, char **command)
-{
-	int		i;
-
-	i = 0;
-	if (array == NULL)
-		return (0);
-	while (array[i] == ' ')
+	quote_flag = 0;
+	while (array[i] == ' ' || array[i] == '\t')
 		i++;
-	while (array[i] != '\0' && array[i] != ' ' && array[i] != '\n')
+	while (array[i] != '\0')
 	{
+		if (array[i] == '\"')
+		{
+			quote_flag = !quote_flag;
+			i++;
+			continue;
+		}
+		else if (array[i] == ' ' && quote_flag == 0)
+		{
+			if (*command == NULL)
+				*command = str_plus_char(NULL, '\0');
+			break;
+		}
 		*command = str_plus_char(*command, array[i]);
 		i++;
 	}
 	return (i);
 }
 
-void	number_word(char *array, int i)
+/*
+	Функция подсчета количества аргументов для двумерного массива
+*/
+int		number_word(char *array, int i)
 {
-	char	word_flag;
-	char	arg_flag;
-	int		number;
+	char	word_flag;	// Флаг детекта конца слова, определяется по пробелам
+	char	arg_flag;	// Флаг конца ковычки, восстанавливается по второй ковычке
+	int		number;		// Длина двумерного массива
 
-	word_flag = 0;
+	word_flag = 1;
 	arg_flag = 0;
-	number = 0;
+	number = 1;			// Сразу включаю NULL в длину двумерного массива
 	while (array[i] != '\0')
 	{
-		if (array[i] != ' ')
+		if (array[i] == '\"')
+			arg_flag = !arg_flag;
+		if (array[i] != ' ' && arg_flag != 1)
 		{
 			if (word_flag != 0)
 				number += 1;
@@ -115,84 +81,81 @@ void	number_word(char *array, int i)
 			word_flag = 1;
 		i++;
 	}
-	printf("ALL NUMBER = %d\n", number);
+	printf("ALL NUMBER ARG = %d\n", number);
+	return (number);
 }
 
-void division_command(t_all *all, char *array)
+/*
+	Сохранение переданной строки в двумерный массив по аргументам.
+*/
+char	**read_arg(char *array, int *i)
+{
+	char	**arg;
+	int		len;
+	int		j;
+
+	len = number_word(array, *i);					// Не работает с | и ;
+	arg = (char **)malloc(len * sizeof(char *));
+	if (arg == NULL)
+		return (NULL);
+	j = 0;
+	while (j < len)
+	{	
+		*i = read_word(array, &arg[j], *i);
+		printf("WORD = %s\n", arg[j]);
+		j++;
+	}
+	arg[j] = NULL;
+	return (arg);
+}
+
+char	check_our_command(t_all *all, char **arg, char *command)
+{
+	char	result;
+
+	result = 1;
+	if (strcmp(command, "export") == 0)
+		ft_export(all, arg);
+	else if (strcmp(command, "unset") == 0)
+		ft_unset(all, arg); 
+	else if (strcmp(command, "pwd") == 0)
+		ft_pwd(all, arg);
+	else if (strcmp(command, "env") == 0)
+		ft_env(all, arg);
+	else if (strcmp(command, "cd") == 0)
+		ft_cd(all, arg);
+	else
+		result = 0;
+	return (result);
+}
+
+void	division_command(t_all *all, char *array)
 {
 	char	*command;
-	char	*arg;
+	char	**arg;
 	int		i;
-	char	*args[5]; // добавил для аргументов
 
+	i = 0;				// Не работает с | и ;     определить хранение индекса
 	command = NULL;
-	arg = NULL;
-	i = read_word(array, &command);
-	if (i == 0)
+	if (array == NULL)
 		return ;
-	number_word(array, i);
-	
+	read_word(array, &command, 0);
+	arg = read_arg(array, &i);
 
-	while (array[i] != '\0')
+	if (check_our_command(all, arg, command) == 0)
 	{
-		arg = str_plus_char(arg, array[i]);
-		i++;
-	}
-	printf("Command = %s\n", command);
-	if (arg == NULL)
-		printf("Arg = NULL\n");
-	else
-		printf("Arg = %s\n", arg);
+		pid_t	pid;				// [!!!]	!!!!	[!!!]
+		int		status;				//		РАЗОБРАТЬСЯ С СОЗДАНИЕМ ПРОЦЕССА
+									//		ВОЗРАЩАЕМЫМ ЗНАЧЕНИЕМ
+									//		ЗАВЕРШЕНИЕМ ПРОЦЕССА
 
-	if (strcmp(command, "env") == 0)
-	{
-		arg = ft_strjoin("env ", arg);
-		ft_env(all,  ft_split(arg, ' '));
-	}
-	// EXPORT
-
-	else if (strcmp(command, "pwd") == 0)
-		ft_pwd(all, args);
-	else if (strcmp(command, "export") == 0)
-	{
-		args[0] = "export"; // добавил чтобы появились аргументы
-		args[1] = "NAME=VADIM";
-		args[2] = "PWD=456";
-		args[3] = "ERT-=123";
-		args[4] = NULL;
-		ft_export(all, args);
-	}
-	// UNSET
-	else if (strcmp(command, "unset") == 0)
-	{
-		args[0] = "unset"; // добавил чтобы появились аргументы
-		args[1] = "N AME";
-		args[2] = "1PWD";
-		args[3] = "PWD=";
-		args[4] = NULL;
-
-		ft_unset(all, args); 
-	}
-	else
-	{
-		pid_t	pid;
-		int		status;
-		
-		char	**str = (char **)malloc(4 * 8);
-		str[0] = "\0";	// Добавить добавление аргументов в двумерный массив
-		str[1] = NULL;
-
-		
-		command = ft_strjoin("/bin/", command);
+		command = ft_strjoin("/bin/", command);		// Добавить перебор путей
 		printf("\"%s\"\n", command);
 		if ((pid = fork()) == 0)
-			if ((execve(command, str, 0)) == -1)	// Завершение процессов после неправильного выполнения
+			if ((execve(command, arg, 0)) == -1)	// Завершение процессов после неправильного выполнения
 				return ;
 
 		while(wait(&status) != pid)
 				continue;
-		
-
-		free(str);
 	}
 }

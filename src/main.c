@@ -23,19 +23,34 @@ void	**make_copy_envp(t_all *all, char **envp)
 	}
 }
 
+char	*read_array(void)
+{
+	char	*array;
+	char	c;
+
+	array = NULL;
+	while (read(0, &c, 1))
+	{
+		if (c == '\n')
+			break;
+		array = str_plus_char(array, c);
+		if (c == '|' || c == ';')
+			break;
+	}
+	return(array);
+}
+
 int main (int argc, char **argv, char **envp)
 {
     t_all	all;
-//	t_envp	env;
 	char	*array;
 
-//	all.envp = &env;
-	if (envp != NULL && envp[0] != NULL) // подумать над этим
+	if (envp != NULL && envp[0] != NULL)	// Подумать над этим
 		make_copy_envp(&all, envp);	
 	while (1)
 	{
-		print_start_command(&all);
-		array = read_array();
+		print_color_start(&all);
+		array = read_array();				// Поместил эту функцию в main
 		division_command(&all, array);
 		free(array);
 	}
