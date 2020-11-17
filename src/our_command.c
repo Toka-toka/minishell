@@ -101,14 +101,21 @@ void    ft_pwd(t_all *all, char **arg)
 void    ft_cd(t_all *all, char **arg)
 {
     char **str;
+    char *pwd;
+    char *oldpwd;
 
     if (chdir(arg[1]) == 0)      //В максимально простом варианте это выглядит так
     {
-        str = (char **)malloc(sizeof(char *) * 3);
-        str[0] = "export";
-        str[1] = ft_strjoin("PWD=", arg[1]);
-        str[2] = NULL;
-        ft_export(all, str);
-        free(str);
+        pwd = search_var(all, "PWD");
+        oldpwd = search_var(all, "OLDPWD");
+        free(oldpwd);
+        oldpwd = pwd;
+        pwd = getcwd(NULL, 0);
+    //    str = (char **)malloc(sizeof(char *) * 3);
+    //    str[0] = "export";
+    //    str[1] = ft_strjoin("PWD=", arg[1]);
+    //    str[2] = NULL;
+    //    ft_export(all, str);
+    //    free(str);
     }
 }
