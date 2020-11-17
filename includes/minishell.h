@@ -8,6 +8,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 
 typedef struct      s_envp
 {

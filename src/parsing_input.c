@@ -151,11 +151,21 @@ void	division_command(t_all *all, char *array)
 									//		[!!!]	!!!!	[!!!]
 
 		command = ft_strjoin("/bin/", command);		// Добавить перебор путей
-		if ((pid = fork()) == 0)
+		pid = fork();
+		if (pid == 0)
+		{
 			if ((execve(command, arg, 0)) == -1)	// Завершение процессов после неправильного выполнения
-				return ;
-
-		while(wait(&status) != pid)
-				continue;
+			{	
+				printf("pid = %d\n", pid);
+//				kill (pid, SIGKILL);
+				printf("error = %s\n", strerror(errno)); // вытащил ошибку просто интереса ради
+			}
+		}
+		wait(&status);
+		if (WIFEXITED(status))
+		{
+        	printf("Exit status: %d\n", WEXITSTATUS(status));
+			printf("error = %s\n", strerror(status));
+		}
 	}
 }
