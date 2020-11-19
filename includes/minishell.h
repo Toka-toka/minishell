@@ -8,6 +8,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <string.h>
+#include <fcntl.h>
 #include <errno.h>
 
 typedef struct      s_envp
@@ -36,6 +37,9 @@ void    ft_cd(t_all *all, char **arg);
 
 void	print_color_start(t_all *all);
 char	*read_array(char *flag_end_command);
+int		read_word(char *array, char **command, int i);
+char	**read_arg(char *array, int *i);
+char	check_our_command(t_all *all, char **arg, char *command);
 void    division_command(t_all *all, char *array);
 char	*str_plus_char(char *src, char c);
 
