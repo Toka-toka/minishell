@@ -124,6 +124,13 @@ char	check_our_command(t_all *all, char **arg, char *command)
 		ft_env(all, arg);
 	else if (strcmp(command, "cd") == 0)
 		ft_cd(all, arg);
+	else if (strcmp(command, "echo") == 0)
+		ft_echo(all, arg);
+	else if (strcmp(command, "exit") == 0)
+	{
+		result = 0;
+//		ft_exit(all, arg);
+	}
 	else
 		result = 0;
 	return (result);

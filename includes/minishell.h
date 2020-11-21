@@ -10,6 +10,8 @@
 #include <string.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <dirent.h>
+#include <sys/types.h>
 
 typedef struct      s_envp
 {
@@ -20,7 +22,8 @@ typedef struct      s_envp
 
 typedef struct      s_all
 {
-    t_envp         *envp;
+    t_envp          *envp;
+    unsigned char   status;
 }                   t_all;
 
 void	ft_putstr(char *str);
@@ -34,6 +37,8 @@ void    ft_env(t_all *all, char **arg);
 void    ft_export(t_all *all, char **arg);
 void    ft_pwd(t_all *all, char **arg);
 void    ft_cd(t_all *all, char **arg);
+void    ft_echo(t_all *all, char **arg);
+void    ft_exit(t_all *all, char **arg);
 
 void	print_color_start(t_all *all);
 char	*read_array(char *flag_end_command);
