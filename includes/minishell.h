@@ -24,6 +24,7 @@ typedef struct      s_all
 {
     t_envp          *envp;
     unsigned char   status;
+    char            pipe;
 }                   t_all;
 
 void	ft_putstr(char *str);

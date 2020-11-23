@@ -1,36 +1,130 @@
 #include "../includes/minishell.h"
 
-char     *find_command(t_all *all, char *command)
+void	fork_create(t_all *all, char *path, char **arg, void (*function)(t_all *all, char **arg))
 {
-    char    **path;
-    char    *way;
-    int     i;
-	DIR 	*dirp;
-    
-    i = 0;
-    path = ft_split(search_var(all, "PATH"), ':');
-    while (path[i] != NULL)
-    {
-        way = ft_strjoin(path[i], "/");
-        way = ft_strjoin(way, command);
-        if (open(way, O_RDONLY) != -1)
-            return(way);
-        i++;
-    }
-   if (open(command, O_RDONLY) != -1)
-    {
-		if (dirp = opendir(command));
+	pid_t	pid;
+	int		status;
+	
+	errno = 0;
+	pid = fork();
+	if (pid == 0)
+	{
+		if(function != NULL)
 		{
-			ft_putstr_fd(command, 2);
-			ft_putstr_fd(": is a directory\n", 2);
-			all->status = 126;
-			return (NULL);
+			function(all, arg);
+			exit(all->status);
 		}
-        return(command);
+		if(execve(path, arg, arr_from_list(all)) == -1)
+		{	
+			if (errno == 13)
+			{
+				ft_putstr_fd(path, 2);
+				ft_putstr_fd(": Permission denied\n", 2);
+				exit (126);
+			}
+			ft_putstr_fd("Execve return -1, exit code = errno\n", 2);
+			exit(errno);
+		}
+	}
+	if (pid > 0)
+	{
+		waitpid(pid, &status, WUNTRACED);
+		all->status = WEXITSTATUS(status);
+	}
+}
+
+char	*ckeck_file(t_all *all, char *command)
+{
+	int fd;
+	DIR *dirp;
+	
+	errno = 0;
+	if ((fd = open(command, O_RDONLY)) != -1)
+		close(fd);
+	if (errno == 2)
+	{
+		ft_putstr_fd(command, 2);
+		ft_putstr_fd(" No such file or directory\n", 2);
+		all->status = 127;
+		return(NULL);
+	}
+	if (dirp = opendir(command))
+	{
+		closedir(dirp);
+		ft_putstr_fd(command, 2);
+		ft_putstr_fd(": is a directory\n", 2);
+		all->status = 126;
+		return(NULL);
+	}	
+	return(command);
+}
+
+// проверка открытия файла из PATH
+
+char     *ckeck_way(t_all *all, char *command)
+{
+	char	**all_path;
+	char	*path;
+	int		i;
+	int		fd;
+	DIR		*dirp;
+    
+	i = 0;
+	all_path = ft_split(search_var(all, "PATH"), ':');
+	errno = 2;
+    while (all_path[i] != NULL && errno == 2)
+    {
+		path = ft_strjoin(all_path[i], "/");
+		path = ft_strjoin(path, command);
+		if ((fd = open(path, O_RDONLY)) != -1)
+		{
+			errno = 0;
+			close(fd);
+		}
+		i++;
     }
-//  ft_putstr_fd(strerror(errno), 2);
-//  ft_putstr_fd("\n", 2);
-    return (NULL); // не нашлось 
+	if (errno == 2 || (dirp = opendir(path)) != NULL)
+	{
+		if (dirp != NULL)
+			closedir(dirp);
+		ft_putstr_fd(command, 2);
+		ft_putstr_fd(": command not found\n", 2);
+		all->status = 127;
+		return(NULL);
+	}
+	return(path);
+}
+
+void	run_manager(t_all *all, char **arg, char *command)
+{
+	void	(*function)(t_all *all, char **arg);
+	char	*path;
+
+	function = NULL;
+	path = NULL;
+
+	if (command [0] == '.' || command[0] == '/')
+		path = ckeck_file(all, command);
+	else if (strcmp(command, "export") == 0)
+		function = ft_export;
+	else if (strcmp(command, "unset") == 0)
+		function = ft_unset; 
+	else if (strcmp(command, "pwd") == 0)
+		function = ft_pwd;
+	else if (strcmp(command, "env") == 0)
+		function = ft_env;
+	else if (strcmp(command, "cd") == 0)
+		function = ft_cd;
+	else if (strcmp(command, "echo") == 0)
+		function = ft_echo;
+	else if (strcmp(command, "exit") == 0)
+	   function = ft_exit;
+	else
+		path = ckeck_way(all, command);
+	if (function != NULL && all->pipe == 0)
+		function(all, arg);
+	else if ((function != NULL && all->pipe == 1) || path != NULL)
+		fork_create(all, path, arg, function);
 }
 
 void	division_command(t_all *all, char *array)
@@ -40,36 +134,12 @@ void	division_command(t_all *all, char *array)
 	char	**arg;
 	int		i;
 
-	i = 0;				// Не работает с | и ;     определить хранение индекса
+	i = 0;
 	command = NULL;
 	if (array == NULL)
 		return ;
 	read_word(array, &command, i);
 	arg = read_arg(array, &i);
-
-	if (check_our_command(all, arg, command) == 0) //&& (way = find_command(all, command)) != NULL)
-	{
-		pid_t	pid;
-		int		status;
-
-//		command = ft_strjoin("/bin/", command);
-		pid = fork();
-		if (pid == 0)
-		{
-			if(strcmp(arg[0], "exit") == 0)
-				ft_exit(all, arg);
-			else if ((execve(way, arg, arr_from_list(all))) == -1)	// Завершение процессов после неправильного выполнения
-			{	
-				printf("pid = %d\n", pid);
-				printf("errno = %d, error = %s\n", errno, strerror(errno)); // вытащил ошибку просто интереса ради
-			}
-		}
-//		ft_exit(all, arg);
-		wait (&status);
-		printf("all->status (fork)= %d", all->status);
-//		if (WIFEXITED(status))
-//		{
-//        	all->status = WEXITSTATUS(status);
-//		}
-	}
+	all->pipe = 0;
+	run_manager(all, arg, command);
 }

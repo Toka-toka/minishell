@@ -129,16 +129,46 @@ void    ft_echo(t_all *all, char **arg)
     all->status = 0;
 }
 
+int    ckeck_exit_arg(char *str)
+{
+    int i;
+
+    i = 0;
+    while (str[i] != '\0')
+    {
+        if (str[i] < '0' || str[i] > '9')
+            return(1);
+        i++;
+    }
+    return(0);
+}
+
 void    ft_exit(t_all *all, char **arg)
 {  
-    all->status = 111;
-    printf("all->status (exit)= %d\n", all->status);
+    unsigned char status;
+    int i;
+    
+    i = 0;
     if (arg[1] == NULL)
-        exit(0);
-    if (arg[2] != NULL)
+        status = 0;
+    else if(arg [1] != NULL && (ckeck_exit_arg(arg[1]) == 1))
+    {
+        ft_putstr_fd("exit: ", 2);
+        ft_putstr_fd(arg[1], 2);
+        ft_putstr_fd(": требуется числовой аргумент\n", 2);
+        status = 2;
+    }
+    else if (arg[2] != NULL)
     {
         ft_putstr_fd("exit: too many arguments\n", 2);
-        exit(1);
+        status = 1;
     }
-    exit(ft_atoi(arg[1]));
+    else
+        status = ft_atoi(arg[1]);
+    if (all->pipe == 0)
+    {
+        exit(status);
+    }
+    else 
+        all->status = status;
 }

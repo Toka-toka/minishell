@@ -108,30 +108,3 @@ char	**read_arg(char *array, int *i)
 	arg[j] = NULL;
 	return (arg);
 }
-
-char	check_our_command(t_all *all, char **arg, char *command)
-{
-	char	result;
-
-	result = 1;
-	if (strcmp(command, "export") == 0)
-		ft_export(all, arg);
-	else if (strcmp(command, "unset") == 0)
-		ft_unset(all, arg); 
-	else if (strcmp(command, "pwd") == 0)
-		ft_pwd(all, arg);
-	else if (strcmp(command, "env") == 0)
-		ft_env(all, arg);
-	else if (strcmp(command, "cd") == 0)
-		ft_cd(all, arg);
-	else if (strcmp(command, "echo") == 0)
-		ft_echo(all, arg);
-	else if (strcmp(command, "exit") == 0)
-	{
-		result = 0;
-//		ft_exit(all, arg);
-	}
-	else
-		result = 0;
-	return (result);
-}
