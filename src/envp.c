@@ -44,12 +44,15 @@ void    del_var(t_all *all, char *name)
     t_envp  *current;
     t_envp  *prev;
     int     len;
+    char    *temp;
 
-    len = ft_strlen(name);
     current = all->envp;
+    temp = name;
     while (current != NULL)
     {
-        if (ft_memcmp(name, current->name, len) == 0)
+        if (name == NULL)
+            temp = current->name;
+        if (strcmp(temp, current->name) == 0)
         {
             free(current->name);
             free(current->value);

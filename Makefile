@@ -17,8 +17,11 @@ NAME = minishell
 SRC = 	src/main.c\
 		src/envp.c\
 		src/parsing_input.c\
-		src/our_command.c\
+		src/our_command1.c\
+		src/our_command2.c\
+		src/our_command3.c\
 		src/color_start.c\
+		src/launch.c
 
 OBJ = $(SRC:.c=.o)
 
@@ -31,7 +34,7 @@ all: $(NAME)
 $(NAME): $(OBJ) $(HEADER)
 	make -C libft
 	mv libft/$(LIBFT) .
-	gcc $(FLAGS) -g -o $(NAME) $(SRC) $(LIBFT) $(HEADER)
+	gcc $(FLAGS) -g -o $(NAME) $(SRC) $(LIBFT)
 
 clean:
 	rm -f $(OBJ)
