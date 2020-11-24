@@ -135,7 +135,7 @@ void	division_command(t_all *all, char *array)
 	char	**arg;
 	int		i;
 
-	i = 0;				// Не работает с | и ;     определить хранение индекса
+	i = 0;				// Не работает с |
 	command = NULL;
 	if (array == NULL)
 		return ;
@@ -151,11 +151,33 @@ void	division_command(t_all *all, char *array)
 									//		[!!!]	!!!!	[!!!]
 
 		command = ft_strjoin("/bin/", command);		// Добавить перебор путей
-		if ((pid = fork()) == 0)
-			if ((execve(command, arg, 0)) == -1)	// Завершение процессов после неправильного выполнения
+		//printf("111. [*]\n");
+		pid = fork();
+		if (pid == 0)
+		{
+			//printf("PID = %d\n", pid);
+
+			if ((execve(command, arg, 0)) == -1)
+			{	// Завершение процессов после неправильного выполнения
+				write(all->standart_fd[1], "!!!!!\n", 10);
 				return ;
+			}
+
+			write(all->standart_fd[1], "222!!\n", 10);
+			printf("!!!!!!!!!!!!!!!!!!!!!\n");
+
+			
+		}
+		else
+		{
+			;
+		}
+		//printf("[*]\n");
+		//close(0);
+		//close(1);
 
 		while(wait(&status) != pid)
 				continue;
+
 	}
 }

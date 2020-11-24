@@ -8,6 +8,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <string.h>
+#include <fcntl.h>
 
 typedef struct      s_envp
 {
@@ -19,6 +20,13 @@ typedef struct      s_envp
 typedef struct      s_all
 {
     t_envp         *envp;
+
+
+    char	pipe;               // Флаг для |
+	char	input;              // Флаг для <
+	char	output;             // Флаг для >
+    int     pipefd[2];          // Файловые дексрипторы для |
+    int     standart_fd[3];     // stdinput, stdout, stderr
 }                   t_all;
 
 void	ft_putstr(char *str);
@@ -34,7 +42,7 @@ void    ft_pwd(t_all *all, char **arg);
 void    ft_cd(t_all *all, char **arg);
 
 void	print_color_start(t_all *all);
-char	*read_array(char *flag_end_command);
+char	*read_array(char *flag_end_command, t_all *all);
 void    division_command(t_all *all, char *array);
 char	*str_plus_char(char *src, char c);
 
