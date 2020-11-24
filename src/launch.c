@@ -4,9 +4,11 @@ void	fork_create(t_all *all, char *path, char **arg, void (*function)(t_all *all
 {
 	pid_t	pid;
 	int		status;
+	char	**envp;
 	
 	errno = 0;
 	pid = fork();
+	
 	if (pid == 0)
 	{
 		if(function != NULL)
@@ -14,7 +16,8 @@ void	fork_create(t_all *all, char *path, char **arg, void (*function)(t_all *all
 			function(all, arg);
 			exit(all->status);
 		}
-		if(execve(path, arg, arr_from_list(all)) == -1)
+		envp = arr_from_list(all);
+		if(execve(path, arg, envp) == -1)
 		{	
 			if (errno == 13)
 			{
@@ -30,6 +33,7 @@ void	fork_create(t_all *all, char *path, char **arg, void (*function)(t_all *all
 	{
 		waitpid(pid, &status, WUNTRACED);
 		all->status = WEXITSTATUS(status);
+//		free_arr((void**)envp);
 	}
 }
 
@@ -71,6 +75,12 @@ char     *ckeck_way(t_all *all, char *command)
     
 	i = 0;
 	all_path = ft_split(search_var(all, "PATH"), ':');
+	if (all_path == NULL)
+	{
+		all_path = malloc(sizeof(char*) * 2);
+		all_path[0] = getcwd(NULL, 0);
+		all_path[1] = NULL;
+	}
 	errno = 2;
     while (all_path[i] != NULL && errno == 2)
     {

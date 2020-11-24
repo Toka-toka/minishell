@@ -1,5 +1,18 @@
 #include "../includes/minishell.h"
 
+void	free_arr(void **arr)
+{
+	int i;
+
+	i = 0;
+	while (arr[i] != NULL)
+	{
+		free(arr[i]);
+		i++;
+	}
+	free(arr);
+}
+
 void	ft_putstr(char *str)
 {
 	while (*str != '\0')

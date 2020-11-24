@@ -40,6 +40,7 @@ void    ft_pwd(t_all *all, char **arg);
 void    ft_cd(t_all *all, char **arg);
 void    ft_echo(t_all *all, char **arg);
 void    ft_exit(t_all *all, char **arg);
+void	free_arr(void **arr);
 
 void	print_color_start(t_all *all);
 char	*read_array(char *flag_end_command);
