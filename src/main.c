@@ -145,6 +145,14 @@ char	*read_array(char *flag_end_command, t_all *all)
 	return(array);
 }
 
+void	fn(int sig)
+{
+	char	*message;
+
+	message = "Do nothing";
+	ft_putchar_fd('\n', 1);
+}
+
 int main (int argc, char **argv, char **envp)
 {
     t_all	all;
@@ -162,11 +170,12 @@ int main (int argc, char **argv, char **envp)
 	all.standart_fd[2] = dup(2);
 	
 	all.pipe = -1;
+	signal(SIGINT, fn);
+	signal(SIGQUIT, fn);
 	while (1)
 	{
 
 		//write(all.standart_fd[1], "WHHHHHAT\n", 10);
-
 		if (flag_end_command == 1)
 		{
 			print_color_start(&all);
@@ -201,7 +210,7 @@ int main (int argc, char **argv, char **envp)
 		}
 		//printf("ARRAY = %s\n", array);
 		division_command(&all, array);
-		free(array);
+//		free(array);
 
 		//char c;
 		//while (read(0, &c, 1))

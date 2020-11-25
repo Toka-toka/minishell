@@ -1,6 +1,6 @@
 #include "../includes/minishell.h"
 
-void    ft_echo(t_all *all, char **arg)
+void    ft_echo(t_all *all, char **arg) // -n!
 {
     int i;
     
@@ -55,7 +55,7 @@ void    ft_exit(t_all *all, char **arg)
     }
     else
         status = ft_atoi(arg[1]);
-    if (all->pipe == 0)
+    if (all->pipe == -1)
     {
 //        del_var(all, NULL);
         exit(status);

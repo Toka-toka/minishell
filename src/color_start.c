@@ -20,7 +20,7 @@ void	print_color_start(t_all *all)
 	write(1, "\033[1;31m", 7);			// Red
 	write(1, "┌─[", 7);
 	write(1, "\033[1;34m", 7);			// Blue
-	print_used_or_dir(all, "NAME");					// Поправил печать имени пользователя
+	print_used_or_dir(all, "USERNAME");					// Поправил печать имени пользователя
 	write(1, "\033[1;31m", 7);			// Red
 	write(1, "]-[", 3);
 	write(1, "\033[1;34m", 7);			// Blue

@@ -131,9 +131,9 @@ void	run_manager(t_all *all, char **arg, char *command)
 	   function = ft_exit;
 	else
 		path = ckeck_way(all, command);
-	if (function != NULL && all->pipe == 0)
+	if (function != NULL && all->pipe == -1)
 		function(all, arg);
-	else if ((function != NULL && all->pipe == 1) || path != NULL)
+	else if ((function != NULL && all->pipe > -1) || path != NULL)
 		fork_create(all, path, arg, function);
 }
 
@@ -150,6 +150,5 @@ void	division_command(t_all *all, char *array)
 		return ;
 	read_word(array, &command, i);
 	arg = read_arg(array, &i);
-	all->pipe = 0;
 	run_manager(all, arg, command);
 }
