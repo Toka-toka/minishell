@@ -26,6 +26,7 @@ typedef struct      s_all
 	char	input;              // Флаг для <
 	char	output;             // Флаг для >
     int     pipefd[2];          // Файловые дексрипторы для |
+    int     pipefd_second[2];
     int     standart_fd[3];     // stdinput, stdout, stderr
     t_envp          *envp;
     unsigned char   status;
@@ -48,8 +49,8 @@ void	free_arr(void **arr);
 
 void	print_color_start(t_all *all);
 char	*read_array(char *flag_end_command, t_all *all);
-int		read_word(char *array, char **command, int i);
-char	**read_arg(char *array, int *i);
+int		read_word(t_all *all, char *array, char **command, int i);
+char	**read_arg(t_all *all, char *array, int *i);
 char	check_our_command(t_all *all, char **arg, char *command);
 void    division_command(t_all *all, char *array);
 char	*str_plus_char(char *src, char c);
