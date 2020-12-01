@@ -7,9 +7,8 @@ void	fork_create(t_all *all, char *path, char **arg, void (*function)(t_all *all
 	char	**envp;
 	
 	errno = 0;
-
 	pid = fork();
-	all->fork = 1;
+	
 	if (pid == 0)
 	{
 		if(function != NULL)
@@ -33,16 +32,9 @@ void	fork_create(t_all *all, char *path, char **arg, void (*function)(t_all *all
 	if (pid > 0)
 	{
 		waitpid(pid, &status, WUNTRACED);
-		if (WIFEXITED(status))
-			all->status = WEXITSTATUS(status);
-		else if (WIFSIGNALED(status))
-			all->status = 128 + WTERMSIG(status);
-		else if (WIFSTOPPED(status))
-			all->status = 128 + WSTOPSIG(status);
-		all->fork = 0;
+		all->status = WEXITSTATUS(status);
 //		free_arr((void**)envp);
 	}
-	pid = -1;
 }
 
 char	*ckeck_file(t_all *all, char *command)
@@ -133,8 +125,8 @@ void	run_manager(t_all *all, char **arg, char *command)
 		function = ft_env;
 	else if (strcmp(command, "cd") == 0)
 		function = ft_cd;
-	else if (strcmp(command, "echo") == 0)
-		function = ft_echo;
+	//else if (strcmp(command, "echo") == 0)
+	//	function = ft_echo;
 	else if (strcmp(command, "exit") == 0)
 	   function = ft_exit;
 	else
@@ -144,7 +136,58 @@ void	run_manager(t_all *all, char **arg, char *command)
 	else if ((function != NULL && all->pipe > -1) || path != NULL)
 		fork_create(all, path, arg, function);
 }
+/*
+void	test_pipe(t_all *all, char **arg, char *command)
+{
+	static	int x;
 
+	static	int	fd1[2];
+	static	int fd2[2];
+
+	if (x == 0)
+	{
+		pipe(fd1);
+		dup2(fd1[1], 1);
+		run_manager(all, arg, command);
+		close(fd1[1]);
+//		dup2(all->standart_fd[1], 1);
+	}
+	if (x < 4)
+	{
+		pipe(fd2);
+		if (all->input == -1)
+			dup2(fd1[0], 0);
+		else
+		{
+			//close(fd1[0]);
+			dup2(all->input, 0);
+			all->input = -1;
+		}
+		//dup2(fd1[0], 0);
+		dup2(fd2[1], 1);
+		run_manager(all, arg, command);
+		close(fd1[0]);
+		dup2(all->standart_fd[0], 0);
+		dup2(fd2[0], fd1[0]);
+		dup2(fd2[1], fd1[1]);
+		close(fd1[1]);
+		close(fd2[1]);
+		//dup2(all->standart_fd[1], 1);
+	}
+	if (x == 4)
+	{
+		dup2(fd1[0], 0);
+		dup2(all->standart_fd[1], 1);
+		run_manager(all, arg, command);
+		close(fd1[0]);
+		dup2(all->standart_fd[0], 0);
+	}
+	if (x == 4)
+		x = 0;
+	else 
+		x++;
+}
+*/
 void	division_command(t_all *all, char *array)
 {
 	char	*command;
@@ -156,7 +199,9 @@ void	division_command(t_all *all, char *array)
 	command = NULL;
 	if (array == NULL)
 		return ;
-	read_word(array, &command, i);
-	arg = read_arg(array, &i);
+	read_word(all, array, &command, i);
+	arg = read_arg(all, array, &i);			// поправить передаваемые значения
+//	run_manager(all, arg, command);
+	//test_pipe(all, arg, command);
 	run_manager(all, arg, command);
 }

@@ -3,32 +3,22 @@
 # include <stdlib.h>
 # include <unistd.h>
 
-int flag;
-
 void	fn(int sig)
 {
-    flag = 1;
-    write(1, "\nSignal caught_nf\n", 15);
+	printf("i cautch a signal = %d", sig);
+    write(1, "\n", 1);
+//    exit(100);
 }
 
 int main()
 {
-    void (*ptr)(int);
-    char c;
-
-    flag = 0;
-    signal(SIGINT, &fn);
-	signal(SIGQUIT, &fn);
-//	signal(SIGTSTP, &fn);
-    while(1)
-    {
-        if (read(0, &c, 1) > 0 || flag == 1)
-            write(1, &c, 1);
-        if (flag == 1)
-        {
-            write(1, "\nSignal caught\n", 15);
-            flag = 0;
-        }
-    }
+    char buf[1];
+    
+//    signal(SIGINT, fn);
+//    signal(SIGTERM, fn);
+//    signal(SIGSEGV, fn);
+//    signal(SIGQUIT, fn);
+    while(read(1, buf, 1) > 0)
+        write(1, buf, 1);
     return(0);
 }
