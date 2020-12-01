@@ -13,6 +13,9 @@
 #include <dirent.h>
 #include <sys/types.h>
 
+//int		signal_flag;
+//pid_t	pid;
+
 typedef struct      s_envp
 {
     char            *name;
@@ -23,10 +26,10 @@ typedef struct      s_envp
 typedef struct      s_all
 {
     char	pipe;               // Флаг для |
+    char    fork;               // Флаг для дочерних процессов
 	char	input;              // Флаг для <
 	char	output;             // Флаг для >
     int     pipefd[2];          // Файловые дексрипторы для |
-    int     pipefd_second[2];
     int     standart_fd[3];     // stdinput, stdout, stderr
     t_envp          *envp;
     unsigned char   status;
@@ -47,10 +50,10 @@ void    ft_echo(t_all *all, char **arg);
 void    ft_exit(t_all *all, char **arg);
 void	free_arr(void **arr);
 
-void	print_color_start(t_all *all);
+void	print_color_start(t_all *all, int sig);
 char	*read_array(char *flag_end_command, t_all *all);
-int		read_word(t_all *all, char *array, char **command, int i);
-char	**read_arg(t_all *all, char *array, int *i);
+int		read_word(char *array, char **command, int i);
+char	**read_arg(char *array, int *i);
 char	check_our_command(t_all *all, char **arg, char *command);
 void    division_command(t_all *all, char *array);
 char	*str_plus_char(char *src, char c);

@@ -91,7 +91,7 @@ char    **arr_from_list(t_all *all) // создание массива из сп
     char    *temp;
     int     i;
 
-    //printf("all = %p\n", all);
+    printf("all = %p\n", all);
     i = 0;
     current = all->envp;
     while (current != NULL)

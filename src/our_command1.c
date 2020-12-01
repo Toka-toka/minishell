@@ -34,9 +34,13 @@ void    ft_export(t_all *all, char **arg)
                 ft_putstr_fd("export: ", 2); // куда нужно направлять ошибки...?
                 ft_putstr_fd(arg[i], 2);
                 ft_putstr_fd(": not a valid identifier\n", 2);
+                all->status = 1;
             }
             else
+            {
                 add_var(all, arg[i]);
+                all->status = 0;
+            }
             i++;
         }
     }
@@ -56,9 +60,13 @@ void    ft_unset(t_all *all, char **arg)
                 ft_putstr_fd("unset: ", 2); // куда нужно направлять ошибки...?
                 ft_putstr_fd(arg[i], 2);
                 ft_putstr_fd(": not a valid identifier\n", 2);
+                all->status = 1;
             }
             else
+            {
                 del_var(all, arg[i]);
+                all->status = 0;
+            }
             i++;
         }
     }
