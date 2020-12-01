@@ -7,8 +7,9 @@ void	fork_create(t_all *all, char *path, char **arg, void (*function)(t_all *all
 	char	**envp;
 	
 	errno = 0;
+
 	pid = fork();
-	
+	all->fork = 1;
 	if (pid == 0)
 	{
 		if(function != NULL)
@@ -32,9 +33,16 @@ void	fork_create(t_all *all, char *path, char **arg, void (*function)(t_all *all
 	if (pid > 0)
 	{
 		waitpid(pid, &status, WUNTRACED);
-		all->status = WEXITSTATUS(status);
+		if (WIFEXITED(status))
+			all->status = WEXITSTATUS(status);
+		else if (WIFSIGNALED(status))
+			all->status = 128 + WTERMSIG(status);
+		else if (WIFSTOPPED(status))
+			all->status = 128 + WSTOPSIG(status);
+		all->fork = 0;
 //		free_arr((void**)envp);
 	}
+	pid = -1;
 }
 
 char	*ckeck_file(t_all *all, char *command)
@@ -131,9 +139,9 @@ void	run_manager(t_all *all, char **arg, char *command)
 	   function = ft_exit;
 	else
 		path = ckeck_way(all, command);
-	if (function != NULL && all->pipe == 0)
+	if (function != NULL && all->pipe == -1)
 		function(all, arg);
-	else if ((function != NULL && all->pipe == 1) || path != NULL)
+	else if ((function != NULL && all->pipe > -1) || path != NULL)
 		fork_create(all, path, arg, function);
 }
 
@@ -150,6 +158,5 @@ void	division_command(t_all *all, char *array)
 		return ;
 	read_word(array, &command, i);
 	arg = read_arg(array, &i);
-	all->pipe = 0;
 	run_manager(all, arg, command);
 }

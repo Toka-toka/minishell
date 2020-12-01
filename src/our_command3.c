@@ -1,21 +1,26 @@
 #include "../includes/minishell.h"
 
-void    ft_echo(t_all *all, char **arg)
+void    ft_echo(t_all *all, char **arg) // -n!
 {
     int i;
+    char    n_flag;
     
     i = 1;
-    while (arg[i] != NULL)
+    n_flag = 0;
+    while (strcmp(arg[i], "-n") == 0)
     {
-        if (arg[i][0] == '$' && arg[i][1] == '?')
-        {
-            ft_putnbr_fd((int)all->status, 1);
-        }
-        else
-            ft_putstr_fd(arg[i], 1);
+        n_flag = 1;
         i++;
     }
-    ft_putstr_fd("\n", 1);
+    while (arg[i] != NULL)
+    {
+        ft_putstr_fd(arg[i], 1);
+        i++;
+        if (arg[i] != NULL)
+            ft_putstr_fd(" ", 1);
+    }
+    if (n_flag == 0)
+        ft_putstr_fd("\n", 1);
     all->status = 0;
 }
 
@@ -55,7 +60,7 @@ void    ft_exit(t_all *all, char **arg)
     }
     else
         status = ft_atoi(arg[1]);
-    if (all->pipe == 0)
+    if (all->pipe == -1)
     {
 //        del_var(all, NULL);
         exit(status);
