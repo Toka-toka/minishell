@@ -37,6 +37,7 @@ void	**make_copy_envp(t_all *all, char **envp)
 }
 
 char	read_output_file(t_all *all, char sign)		// добавить ковычки
+{	
 	char	*file_name;
 	char	c;
 	int		result;
@@ -137,8 +138,7 @@ char	*read_array(char *flag_end_command, t_all *all)
 
 	return(array);
 }
-*/
-
+/*
 char	read_output_file(t_all *all, char sign)
 {
 	char	*file_name;
@@ -216,26 +216,16 @@ char	*read_array(char *flag_end_command, t_all *all)
 		i++;
 		result = read(0, &c, 1);
 	}
-	/*
 	printf("first_pipe %d\n", all->pipe);
 	printf("re_input %d\n", all->input);
 	printf("re_output %d\n", all->output);
 	printf("ARRAY = %s\n", array);
-	*/
 	return(array);
-}
+}*/
 
 void	fn(int sig)
 {
 	print_color_start(NULL, sig);
-}	
-
-void	fn(int sig)
-{
-	char	*message;
-
-	message = "Do nothing";
-	ft_putchar_fd('\n', 1);
 }
 
 int main (int argc, char **argv, char **envp)

@@ -133,8 +133,8 @@ void	run_manager(t_all *all, char **arg, char *command)
 		function = ft_env;
 	else if (strcmp(command, "cd") == 0)
 		function = ft_cd;
-	//else if (strcmp(command, "echo") == 0)
-	//	function = ft_echo;
+	else if (strcmp(command, "echo") == 0)
+		function = ft_echo;
 	else if (strcmp(command, "exit") == 0)
 	   function = ft_exit;
 	else
