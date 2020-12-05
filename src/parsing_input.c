@@ -83,25 +83,60 @@ int		read_word(t_all *all, char *array, char **command, int i)
 			continue;
 		}
 		else if (array[i] == '$')
+    	{
+	      if (array[i + 1] == '?')
+	      {
+	        *command = number_to_str(*command, all->status, all);
+	        i += 2;
+	        continue;
+      }
+		else
 		{
-			if (array[i + 1] == '?')
-			{
-				//dprintf(all->standart_fd[1], "$?\n");
-				*command = number_to_str(*command, all->status, all);
-				//*command = str_plus_char(*command);
-				i += 2;
-				continue;
-			}
-			/*
-			char	*name;
-			int		j;
+			char  *name;
+			int    j;
 
 			name = NULL;
 			j = i + 1;
 			write(all->standart_fd[1], "TEST\n", 5);
-			read_word(all, array, &name, j);
-			dprintf(all->standart_fd[1], "name = \"%s\"\n", name);
-			*/
+			while (ft_isalnum(array[j]))
+			{
+			name = str_plus_char(name, array[j]);
+			j++;
+			if (name[0] >= '0' && name[0] <= '9')
+			{
+				i = j;
+				continue;
+			}
+			
+			}
+			//read_word(all, array, &name, j);
+//			dprintf(all->standart_fd[1], "name = \"%s\"\n", name);
+			if (name != NULL)
+			{
+			char  *str;
+			str = search_var(all, name);
+			if (*command == NULL)
+				*command = ft_strjoin("", search_var(all, name));
+			else
+				*command = ft_strjoin(*command, search_var(all, name));
+//			dprintf(all->standart_fd[1], "str = \"%s\"\n", *command);
+			
+			}
+			if (array[j] == '$' && i != j)
+			{
+			i = j;
+			continue;
+			}
+			if (array[j] != ' ' && array[j] != '\0')
+			{
+//			dprintf(all->standart_fd[1], "array[j] = \"%c\"\n", array[j]);
+			i = j;
+			continue;
+			//i -= 1;
+			}
+			else
+			i = j;
+		}
 		}
 		else if (array[i] == '\"')
 		{
@@ -109,7 +144,7 @@ int		read_word(t_all *all, char *array, char **command, int i)
 			i++;
 			continue;
 		}
-		else if (array[i] == '\\')
+/*		else if (array[i] == '\\')
 		{
 			if (array[i + 1] != '\0')
 			{
@@ -129,7 +164,7 @@ int		read_word(t_all *all, char *array, char **command, int i)
 			}
 			//i += 2;
 			continue;
-		}
+		} */
 		else if (array[i] == ' ' && quote_flag == 0)
 		{
 			if (*command == NULL)
@@ -164,7 +199,7 @@ int		number_word(char *array, int i)
 		{
 			if (word_flag != 0)
 				number += 1;
-			word_flag = 0;
+			//word_flag = 0;
 		}
 		else
 			word_flag = 1;
@@ -185,6 +220,7 @@ char	**read_arg(t_all *all, char *array, int *i)
 
 	len = number_word(array, *i);					// Не работает с | и ;
 	arg = (char **)malloc((len + 1) * sizeof(char *));
+//	dprintf(all->standart_fd[1], "LEn = %d", len);
 	if (arg == NULL)
 		return (NULL);
 	j = 0;
@@ -192,7 +228,7 @@ char	**read_arg(t_all *all, char *array, int *i)
 	{	
 		arg[j] = NULL;
 		*i = read_word(all, array, &arg[j], *i);
-		//dprintf(all->standart_fd[1], "ARG = \"%s\"\n", arg[j]);
+	//	dprintf(all->standart_fd[1], "ARG = \"%s\"\n", arg[j]);
 		j++;
 	}
 	arg[j] = NULL;

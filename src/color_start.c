@@ -21,9 +21,9 @@ void	print_color_start(t_all *all, int sig)
 
 	if (temp == NULL)
 		temp = all;
-	if (sig != 0)
+	if (sig != 0 && temp->fork == 0)
 		write(0, "\n", 1);
-	if (temp->fork == 0 && sig != SIGQUIT)
+	if (temp->fork == 0)
 	{
 		write(0, "\033[1;31m", 7);			// Red
 		write(0, "┌─[", 7);

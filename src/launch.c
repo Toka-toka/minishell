@@ -1,5 +1,34 @@
 #include "../includes/minishell.h"
 
+char    **arr_from_list(t_all *all) // создание массива из списка
+{
+    t_envp  *current;
+    char    **arr;
+    char    *temp;
+    int     i;
+
+    //printf("all = %p\n", all);
+    i = 0;
+    current = all->envp;
+    while (current != NULL)
+    {
+        current = current->next;
+        i++;
+    }
+    arr = (char **)malloc(sizeof(char *) * (i));
+    current = all->envp;
+    i = 0;
+    while (current != NULL)
+    {
+        temp = ft_strjoin(current->name, "=");
+        arr[i] = ft_strjoin(temp, current->value);
+        i++;
+        current = current->next;
+    }
+    arr[i] = NULL;
+    return(arr);
+}
+
 void	fork_create(t_all *all, char *path, char **arg, void (*function)(t_all *all, char **arg))
 {
 	pid_t	pid;
@@ -101,6 +130,7 @@ char     *ckeck_way(t_all *all, char *command)
 		}
 		i++;
     }
+	dirp = NULL;
 	if (errno == 2 || (dirp = opendir(path)) != NULL)
 	{
 		if (dirp != NULL)
@@ -121,6 +151,7 @@ void	run_manager(t_all *all, char **arg, char *command)
 	function = NULL;
 	path = NULL;
 
+	all->status = 0;
 	if (command [0] == '.' || command[0] == '/')
 		path = ckeck_file(all, command);
 	else if (strcmp(command, "export") == 0)
@@ -209,6 +240,9 @@ void	division_command(t_all *all, char *array)
 		return ;
 	read_word(all, array, &command, i);
 	arg = read_arg(all, array, &i);			// поправить передаваемые значения
+
+	command = echo;
+	
 //	run_manager(all, arg, command);
 	//test_pipe(all, arg, command);
 	run_manager(all, arg, command);

@@ -20,6 +20,7 @@ typedef struct      s_envp
 {
     char            *name;
     char            *value;
+    char            *prinf_flag;
     struct s_envp   *next;
 }                   t_envp;
 
@@ -42,6 +43,7 @@ void    print_envp(t_all *all, int i);
 char    **arr_from_list(t_all *all);
 char    *search_var(t_all *all, char *name);
 void    del_var(t_all *all, char *name);
+void    print_sort(t_all *all);
 void    ft_unset(t_all *all, char **arg);
 void    ft_env(t_all *all, char **arg);
 void    ft_export(t_all *all, char **arg);

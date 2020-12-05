@@ -22,6 +22,11 @@ void	ft_putstr(char *str)
 	}
 }
 
+void	fn(int sig)
+{
+	print_color_start(NULL, sig);
+}
+
 void	**make_copy_envp(t_all *all, char **envp)
 {
 	int i;
@@ -34,6 +39,16 @@ void	**make_copy_envp(t_all *all, char **envp)
 		add_var(all, envp[i]);
 		i++;
 	}
+	all->standart_fd[0] = dup(0);
+	all->standart_fd[1] = dup(1);
+	all->standart_fd[2] = dup(2);
+	
+	all->pipe = -1;
+	all->fork = 0;
+	all->status = 0;
+	signal(SIGINT, &fn);
+	signal(SIGQUIT, &fn);
+	signal(SIGTSTP, &fn);
 }
 
 char	read_output_file(t_all *all, char sign)		// добавить ковычки
@@ -110,6 +125,21 @@ char	*read_array(char *flag_end_command, t_all *all)
 			*flag_end_command = 1;
 			break;
 		}
+		else if (c == '\\')
+		{
+			result = read(0, &c, 1);
+			if (result == 1)
+			{
+				array = str_plus_char(array, c);
+				result = read(0, &c, 1);
+				continue;
+			}
+			else
+			{
+				array = str_plus_char(array, '\0');
+				break;
+			}
+		}
 		else if (c == ';')
 			break;
 		else if (c == '|')
@@ -138,95 +168,6 @@ char	*read_array(char *flag_end_command, t_all *all)
 
 	return(array);
 }
-/*
-char	read_output_file(t_all *all, char sign)
-{
-	char	*file_name;
-	char	c;
-
-	file_name = NULL;
-
-	//printf("SIGN = %c\n", sign);
-	while (read(0, &c, 1))
-		if (c != ' ')
-			break;
-	file_name = str_plus_char(file_name, c);
-	while (read(0, &c, 1))
-	{
-		if (c == '\n')
-			break;
-		else if (c == ' ' || c == ';' || c == '|')
-			break;
-		else if (c == '>' || c == '<')
-			break;
-		file_name = str_plus_char(file_name, c);
-	}
-	if (sign == '>')
-	{
-		all->output = open(file_name, O_CREAT | O_RDWR | O_TRUNC, S_IRWXU | S_IRWXG | S_IRWXO);
-		if (all->output != -1)
-			dup2(all->output, 1);
-		all->output = -1;
-	}
-	else if (sign == '<')
-	{
-		all->input = open(file_name, O_RDWR);	// изменить флаги открытия файла ??
-		if (all->input != -1)
-			dup2(all->input, 0);
-		all->input = -1;
-	}
-	//printf("file_name = %s\n", file_name);
-	return (c);
-}
-
-char	*read_array(char *flag_end_command, t_all *all)
-{
-	char	*array;
-	char	c;
-	char	result;
-	int		i = 0;
-
-	//all->pipe = -1;
-	all->input = -1;
-	all->output = -1;
-
-	array = NULL;
-	result = read(0, &c, 1);
-	while (result)
-	{
-		if (c == '\n')
-		{
-			*flag_end_command = 1;
-			break;
-		}
-		else if (c == ';')
-			break;
-		else if (c == '|')
-		{
-			if (all->output == -1)
-				all->pipe = i;
-			break;
-		}
-		else if (c == '>' || c == '<')
-		{
-			c = read_output_file(all, c);
-			continue;
-		}
-		array = str_plus_char(array, c);
-		i++;
-		result = read(0, &c, 1);
-	}
-	printf("first_pipe %d\n", all->pipe);
-	printf("re_input %d\n", all->input);
-	printf("re_output %d\n", all->output);
-	printf("ARRAY = %s\n", array);
-	return(array);
-}*/
-
-void	fn(int sig)
-{
-	print_color_start(NULL, sig);
-}
 
 int main (int argc, char **argv, char **envp)
 {
@@ -240,17 +181,6 @@ int main (int argc, char **argv, char **envp)
 	
 
 	//all.output = -1;
-	all.standart_fd[0] = dup(0);
-	all.standart_fd[1] = dup(1);
-	all.standart_fd[2] = dup(2);
-	
-	all.pipe = -1;
-	all.fork = 0;
-	all.status = 0;
-
-	signal(SIGINT, &fn);
-	signal(SIGQUIT, &fn);
-	signal(SIGTSTP, &fn);
 
 	while (1)
 	{
@@ -262,7 +192,7 @@ int main (int argc, char **argv, char **envp)
 		}
 
 		array = read_array(&flag_end_command, &all);
-
+//		printf("%s\n", array);
 		if (all.pipe == 1)
 		{
 			if (all.input != -1)

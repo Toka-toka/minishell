@@ -1,4 +1,4 @@
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 void    ft_echo(t_all *all, char **arg) // -n!
 {

@@ -15,13 +15,13 @@
 NAME = minishell
 
 SRC = 	src/main.c\
-		src/envp.c\
 		src/parsing_input.c\
-		src/our_command1.c\
-		src/our_command2.c\
-		src/our_command3.c\
 		src/color_start.c\
-		src/launch.c
+		src/launch.c\
+		src/our_command/echo_exit.c\
+		src/our_command/export.c\
+		src/our_command/pwd_cd.c\
+		src/our_command/unset_env.c
 
 OBJ = $(SRC:.c=.o)
 
