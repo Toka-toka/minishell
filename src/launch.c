@@ -15,13 +15,14 @@ char    **arr_from_list(t_all *all) // создание массива из сп
         current = current->next;
         i++;
     }
-    arr = (char **)malloc(sizeof(char *) * (i));
+    arr = (char **)malloc(sizeof(char *) * (i + 1));
     current = all->envp;
     i = 0;
     while (current != NULL)
     {
         temp = ft_strjoin(current->name, "=");
         arr[i] = ft_strjoin(temp, current->value);
+		free(temp);
         i++;
         current = current->next;
     }
@@ -39,6 +40,7 @@ void	fork_create(t_all *all, char *path, char **arg, void (*function)(t_all *all
 
 	pid = fork();
 	all->fork = 1;
+	envp = arr_from_list(all);
 	if (pid == 0)
 	{
 		if(function != NULL)
@@ -46,7 +48,6 @@ void	fork_create(t_all *all, char *path, char **arg, void (*function)(t_all *all
 			function(all, arg);
 			exit(all->status);
 		}
-		envp = arr_from_list(all);
 		if(execve(path, arg, envp) == -1)
 		{	
 			if (errno == 13)
@@ -62,6 +63,7 @@ void	fork_create(t_all *all, char *path, char **arg, void (*function)(t_all *all
 	if (pid > 0)
 	{
 		waitpid(pid, &status, WUNTRACED);
+		free_arr((void**)envp);
 		if (WIFEXITED(status))
 			all->status = WEXITSTATUS(status);
 		else if (WIFSIGNALED(status))
@@ -69,7 +71,6 @@ void	fork_create(t_all *all, char *path, char **arg, void (*function)(t_all *all
 		else if (WIFSTOPPED(status))
 			all->status = 128 + WSTOPSIG(status);
 		all->fork = 0;
-//		free_arr((void**)envp);
 	}
 	pid = -1;
 }
@@ -97,7 +98,7 @@ char	*ckeck_file(t_all *all, char *command)
 		all->status = 126;
 		return(NULL);
 	}	
-	return(command);
+	return(ft_strdup(command));
 }
 
 // проверка открытия файла из PATH
@@ -106,6 +107,7 @@ char     *ckeck_way(t_all *all, char *command)
 {
 	char	**all_path;
 	char	*path;
+	char	*temp;
 	int		i;
 	int		fd;
 	DIR		*dirp;
@@ -121,16 +123,20 @@ char     *ckeck_way(t_all *all, char *command)
 	errno = 2;
     while (all_path[i] != NULL && errno == 2)
     {
-		path = ft_strjoin(all_path[i], "/");
-		path = ft_strjoin(path, command);
+		temp = ft_strjoin(all_path[i], "/");
+		path = ft_strjoin(temp, command);
+		free(temp);
 		if ((fd = open(path, O_RDONLY)) != -1)
 		{
 			errno = 0;
 			close(fd);
 		}
+		else
+			free(path);
 		i++;
     }
 	dirp = NULL;
+	free_arr(all_path);
 	if (errno == 2 || (dirp = opendir(path)) != NULL)
 	{
 		if (dirp != NULL)
@@ -154,19 +160,19 @@ void	run_manager(t_all *all, char **arg, char *command)
 	all->status = 0;
 	if (command [0] == '.' || command[0] == '/')
 		path = ckeck_file(all, command);
-	else if (strcmp(command, "export") == 0)
+	else if (ft_strcmp(command, "export") == 0)
 		function = ft_export;
-	else if (strcmp(command, "unset") == 0)
+	else if (ft_strcmp(command, "unset") == 0)
 		function = ft_unset; 
-	else if (strcmp(command, "pwd") == 0)
+	else if (ft_strcmp(command, "pwd") == 0)
 		function = ft_pwd;
-	else if (strcmp(command, "env") == 0)
+	else if (ft_strcmp(command, "env") == 0)
 		function = ft_env;
-	else if (strcmp(command, "cd") == 0)
+	else if (ft_strcmp(command, "cd") == 0)
 		function = ft_cd;
-	else if (strcmp(command, "echo") == 0)
+	else if (ft_strcmp(command, "echo") == 0)
 		function = ft_echo;
-	else if (strcmp(command, "exit") == 0)
+	else if (ft_strcmp(command, "exit") == 0)
 	   function = ft_exit;
 	else
 		path = ckeck_way(all, command);
@@ -174,6 +180,8 @@ void	run_manager(t_all *all, char **arg, char *command)
 		function(all, arg);
 	else if ((function != NULL && all->pipe > -1) || path != NULL)
 		fork_create(all, path, arg, function);
+	if (path != NULL)
+		free(path);
 }
 /*
 void	test_pipe(t_all *all, char **arg, char *command)
@@ -240,10 +248,8 @@ void	division_command(t_all *all, char *array)
 		return ;
 	read_word(all, array, &command, i);
 	arg = read_arg(all, array, &i);			// поправить передаваемые значения
-
-	command = echo;
-	
 //	run_manager(all, arg, command);
 	//test_pipe(all, arg, command);
+//	printf("command = %s\n", command);
 	run_manager(all, arg, command);
 }

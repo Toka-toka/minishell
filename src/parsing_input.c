@@ -86,7 +86,8 @@ int		read_word(t_all *all, char *array, char **command, int i)
     	{
 	      if (array[i + 1] == '?')
 	      {
-	        *command = number_to_str(*command, all->status, all);
+	        printf("status = %d\n", all->status);
+			*command = number_to_str(*command, all->status, all);
 	        i += 2;
 	        continue;
       }

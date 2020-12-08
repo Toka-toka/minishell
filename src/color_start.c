@@ -21,9 +21,18 @@ void	print_color_start(t_all *all, int sig)
 
 	if (temp == NULL)
 		temp = all;
-	if (sig != 0 && temp->fork == 0)
+	if (sig == SIGQUIT && temp->fork == 0)
+	{
+		sleep(1);
+		write(0, "\b\b", 2);
+		sleep(1);
+		write(0, "  ", 2);
+		sleep(1);
+		write(0, "\b\b", 2);
+	}
+	if (sig != 0 && temp->fork == 0 && sig != SIGQUIT)
 		write(0, "\n", 1);
-	if (temp->fork == 0)
+	if (temp->fork == 0 && (sig == SIGINT || sig == 0))
 	{
 		write(0, "\033[1;31m", 7);			// Red
 		write(0, "┌─[", 7);
@@ -39,7 +48,12 @@ void	print_color_start(t_all *all, int sig)
 		write(0, "\033[1;33m", 7);			// Yellow
 		write(0, "$", 1);
 		write(0, "\033[0m", 4);				// Reset
+		if (sig == SIGINT)
+			temp->status = 130;
 	}
-	if (sig == SIGINT)
-		temp->status = 130;
+//	if (temp->fork == 0 && sig == SIGQUIT)
+//	{
+//		write(0, "Hello\n", 6);
+//		write(0, "\b\b  \b\b", 6);
+//	}
 }

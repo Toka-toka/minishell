@@ -117,7 +117,6 @@ char	*read_array(char *flag_end_command, t_all *all)
 
 	array = NULL;
 	result = read(0, &c, 1);
-//	printf("Im here\n");
 	while (result)
 	{
 		//printf("C = \"%c\"\n", c);
@@ -175,94 +174,13 @@ int main (int argc, char **argv, char **envp)
     t_all	all;
 	char	flag_end_command;
 	char	*array;
-
-	char	*command = "export";
-	char	**arg[5] = {"export", NULL};
-
-
 	
 	if (envp != NULL && envp[0] != NULL)	// Подумать над этим
 		make_copy_envp(&all, envp);
 	flag_end_command = 1;
+	
 
-	command = "export";
-	arg[0] = "export";
-	arg[1] = "AAA=123";
-	arg[2] = NULL;
-
-	run_manager(&all, arg, command);
-
-	command = "export";
-	arg[0] = "export";
-	arg[1] = NULL;
-
-	run_manager(&all, arg, command);		
-
-	command = "ls";
-	arg[0] = "ls";
-	arg[1] = NULL;
-
-	run_manager(&all, arg, command);
-
-	command = "env";
-	arg[0] = "env";
-	arg[1] = NULL;
-
-	run_manager(&all, arg, command);
-
-	command = "./a.out";
-	arg[0] = "./a.out";
-	arg[1] = NULL;	
-
-	run_manager(&all, arg, command);
-
-	command = "cd";
-	arg[0] = "cd";
-	arg[1] = "..";
-	arg[2] = NULL;
-
-	run_manager(&all, arg, command);
-
-	command = "unset";
-	arg[0] = "unset";
-	arg[1] = "PWD";
-	arg[2] = NULL;
-
-	run_manager(&all, arg, command);
-
-	command = "unset";
-	arg[0] = "unset";
-	arg[1] = "OLDPWD";
-	arg[2] = NULL;
-
-	run_manager(&all, arg, command);
-
-	command = "cd";
-	arg[0] = "cd";
-	arg[1] = NULL;
-
-	run_manager(&all, arg, command);
-
-	command = "pwd";
-	arg[0] = "pwd";
-	arg[1] = NULL;
-
-	run_manager(&all, arg, command);
-
-	command = "export";
-	arg[0] = NULL;
-	arg[1] = NULL;
-
-	run_manager(&all, arg, command);		
-
-	command = "exit";
-	arg[0] = "exit";
-	arg[1] = "123";
-	arg[2] = NULL;
-
-	run_manager(&all, arg, command);
-/*	
-	all.output = -1;
+	//all.output = -1;
 
 	while (1)
 	{
@@ -346,6 +264,5 @@ int main (int argc, char **argv, char **envp)
 		all.input = -1;
 		all.output = -1;
 	}
-	*/
     return(0);
 }
