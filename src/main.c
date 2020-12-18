@@ -184,7 +184,7 @@ int main (int argc, char **argv, char **envp)
 	if (envp != NULL && envp[0] != NULL)	// Подумать над этим
 		make_copy_envp(&all, envp);
 	flag_end_command = 1;
-
+/*
 	command = "export";
 	arg[0] = "export";
 	arg[1] = "AAA=123";
@@ -260,8 +260,8 @@ int main (int argc, char **argv, char **envp)
 	arg[1] = "123";
 	arg[2] = NULL;
 
-	run_manager(&all, arg, command);
-/*	
+	run_manager(&all, arg, command);*/
+
 	all.output = -1;
 
 	while (1)
@@ -346,6 +346,5 @@ int main (int argc, char **argv, char **envp)
 		all.input = -1;
 		all.output = -1;
 	}
-	*/
     return(0);
 }

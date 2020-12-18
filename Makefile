@@ -18,6 +18,7 @@ SRC = 	src/main.c\
 		src/parsing_input.c\
 		src/color_start.c\
 		src/launch.c\
+		src/fork_create.c\
 		src/our_command/echo_exit.c\
 		src/our_command/export.c\
 		src/our_command/pwd_cd.c\

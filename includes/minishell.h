@@ -53,6 +53,8 @@ void    ft_cd(t_all *all, char **arg);
 void    ft_echo(t_all *all, char **arg);
 void    ft_exit(t_all *all, char **arg);
 void	free_arr(void **arr);
+void	fork_create(t_all *all, char *path, char **arg,
+        void (*function)(t_all *all, char **arg));
 
 void	print_color_start(t_all *all, int sig);
 char	*read_array(char *flag_end_command, t_all *all);
