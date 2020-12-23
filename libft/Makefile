@@ -51,6 +51,7 @@ SRC = 	ft_atoi.c\
 		ft_putendl_fd.c\
 		ft_putnbr_fd.c\
 		get_next_line.c\
+		ft_strcmp.c
 
 OBJ = $(SRC:.c=.o)
 

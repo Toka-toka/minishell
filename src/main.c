@@ -36,7 +36,7 @@ void	**make_copy_envp(t_all *all, char **envp)
 	all->envp = NULL;
 	while (envp[i] != NULL)
 	{
-		add_var(all, envp[i]);
+		add_var(all, envp[i], 0);
 		i++;
 	}
 	all->standart_fd[0] = dup(0);

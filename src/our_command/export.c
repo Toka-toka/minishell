@@ -1,12 +1,24 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   export.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sedric <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/12/08 22:02:48 by sedric            #+#    #+#             */
+/*   Updated: 2020/12/08 22:02:49 by sedric           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../includes/minishell.h"
 
-void		add_var(t_all *all, const char *str) // поиск по имени?
+t_envp		*create_var(char *str)
 {
-	t_envp	*current;
-	t_envp	*new;
 	int		i;
-	
+	t_envp	*new;
+
 	i = 0;
+	new = NULL;
 	while (str[i] != '=' && str[i] != '\0')
 		i++;
 	if (str[i] == '=')
@@ -15,14 +27,27 @@ void		add_var(t_all *all, const char *str) // поиск по имени?
 		new->name = ft_substr(str, 0, i);
 		new->value = ft_strdup(str + i + 1);
 		new->next = NULL;
-		if (all->envp == NULL) //что будет если удалить все и начать записывать заново
+	}
+	return (new);
+}
+
+void		add_var(t_all *all, const char *str, int i)
+{
+	t_envp	*current;
+	t_envp	*new;
+
+	new = create_var(str);
+	if (new != NULL)
+	{
+		if (all->envp == NULL)
 			all->envp = new;
 		else
 		{
 			current = all->envp;
-			while (current->next != NULL && strcmp(new->name, current->name) != 0)
+			while (current->next != NULL &&
+			ft_strcmp(new->name, current->name) != 0)
 				current = current->next;
-			if (strcmp(new->name, current->name) == 0)
+			if (ft_strcmp(new->name, current->name) == 0)
 			{
 				free(current->value);
 				current->value = new->value;
@@ -35,7 +60,7 @@ void		add_var(t_all *all, const char *str) // поиск по имени?
 	}
 }
 
-void	print_sort_envp(t_all *all, t_envp *current, int len_max)
+void		print_sort_envp(t_all *all, t_envp *current, int len_max)
 {
 	t_envp	*max;
 	int		symb_max;
@@ -64,7 +89,7 @@ void	print_sort_envp(t_all *all, t_envp *current, int len_max)
 	ft_putstr("\"\n");
 }
 
-void	sort_envp(t_all *all)
+void		sort_envp(t_all *all)
 {
 	t_envp	*temp;
 	int		len_max;
@@ -88,9 +113,9 @@ void	sort_envp(t_all *all)
 	}
 }
 
-void	ft_export(t_all *all, char **arg)
+void		ft_export(t_all *all, char **arg)
 {
-	int	i;
+	int		i;
 
 	if (arg[1] == NULL)
 		sort_envp(all);
@@ -101,13 +126,9 @@ void	ft_export(t_all *all, char **arg)
 		{
 			all->status = 0;
 			if ((all->status = var_name_check(arg[i], 1)) == 1)
-			{
-				ft_putstr_fd("export: ", 2);
-				ft_putstr_fd(arg[i], 2);
-				ft_putstr_fd(": not a valid identifier\n", 2);
-			}
+				print_err("export", arg[1], "not a valid identifier");
 			else
-				add_var(all, arg[i]);
+				add_var(all, arg[i], 0);
 			i++;
 		}
 	}

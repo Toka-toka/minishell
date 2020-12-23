@@ -1,42 +1,66 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pwd_cd.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sedric <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/12/08 22:02:54 by sedric            #+#    #+#             */
+/*   Updated: 2020/12/08 22:03:14 by sedric           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+void		call_export(t_all *all, char *name, char *value)
+{
+	char	*temp[3];
+
+	temp[0] = "export";
+	temp[2] = ft_strjoin(name, "=");
+	temp[1] = ft_strjoin(temp[2], value);
+	free(temp[2]);
+	temp[2] = NULL;
+	ft_export(all, temp);
+	free(temp[1]);
+}
 
 void		ft_pwd(t_all *all, char **arg)
 {
 	char	*path;
 
 	path = getcwd(NULL, 0);
-	ft_putstr_fd(path, 1);
-	ft_putstr_fd("\n", 1);
-	free(path); // может не показать дирректорию !
+	if (path != NULL)
+	{
+		ft_putstr_fd(path, 1);
+		ft_putstr_fd("\n", 1);
+		free(path);
+	}
+	else
+	{
+		print_err("pwd", NULL, strerror(errno));
+		all->status = 1;
+	}
 }
 
 void		change_pwd(t_all *all, char *oldpwd)
 {
 	char	*pwd_envp;
 	char	*oldpwd_envp;
-	char	*temp[3];
 
-	temp[0] = "export";
+	pwd_envp = NULL;
 	if ((oldpwd_envp = search_var(all, "OLDPWD")) != NULL)
 	{
-		temp[2] = ft_strjoin("OLDPWD", "=");
 		if ((pwd_envp = search_var(all, "PWD")) != NULL)
-			temp[1] = ft_strjoin(temp[2], pwd_envp);
+			call_export(all, "OLDPWD", pwd_envp);
 		else
-			temp[1] = ft_strjoin(temp[2], oldpwd);
-		free(temp[2]);
-		temp[2] = NULL;
-		ft_export(all, temp);
+			call_export(all, "OLDPWD", oldpwd);
 	}
 	if (pwd_envp != NULL)
 	{
 		pwd_envp = getcwd(NULL, 0);
-		temp[2] = ft_strjoin("PWD", "=");
-		temp[1] = ft_strjoin(temp[2], pwd_envp);
-		free(temp[2]);
-		temp[2] = NULL;
-		ft_export(all, temp);
+		call_export(all, "PWD", pwd_envp);
+		free(pwd_envp);
 	}
 }
 

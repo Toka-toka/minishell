@@ -58,5 +58,6 @@ void	ft_putstr_fd(char *s, int fd);
 void	ft_putendl_fd(char *s, int fd);
 void	ft_putnbr_fd(int n, int fd);
 int		get_next_line(int fd, char **line);
+int		ft_strcmp(const char *s1, const char *s2);
 
 #endif
