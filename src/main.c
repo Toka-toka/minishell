@@ -46,103 +46,142 @@ void	**make_copy_envp(t_all *all, char **envp)
 	all->pipe = -1;
 	all->fork = 0;
 	all->status = 0;
-	signal(SIGINT, &fn);
-	signal(SIGQUIT, &fn);
-	signal(SIGTSTP, &fn);
+//	signal(SIGINT, &fn);
+//	signal(SIGQUIT, &fn);
+//	signal(SIGTSTP, &fn);
 }
 
-char	read_output_file(t_all *all, char sign)		// добавить ковычки
-{	
-	char	*file_name;
+char	print_error(char *sumbol)
+{
+	int		i;
+
+	i = 0;
+	write(1, "bash: syntax error near unexpected token `", 43);
+	while (sumbol[i] != '\0')
+		i++;
+	write(1, sumbol, i);
+	write(1, "\'\n", 2);
+	return (1);
+}
+
+char	find_error(char *str_input)
+{
+	char	quote_flag;
+	char	single_quote_flag;
+	int		i;
+	int		j;
+
+	i = 0;
+	quote_flag = 0;
+	single_quote_flag = 0;
+	while (str_input[i] != '\0')
+	{
+		if (str_input[i] == ';' && quote_flag == 0 && single_quote_flag == 0)
+		{
+			j = i;
+			while (str_input[++j] != '\0')
+			{
+				if (str_input[j] != ' ')
+					break;
+			}
+			if (str_input[j] == ';' || str_input[j] == '|' || i == 0)
+			{
+				str_input[i + 1] = '\0';
+				return (print_error(str_input + i));
+			}
+		}
+		else if (str_input[i] == '|' && quote_flag == 0 && single_quote_flag == 0)
+		{
+			j = i;
+			while (str_input[++j] != '\0')
+			{
+				if (str_input[j] != ' ')
+					break;
+			}
+			if (str_input[j] == ';' || str_input[j] == '|' || i == 0)
+			{
+				str_input[i + 1] = '\0';
+				return (print_error(str_input + i));
+			}
+		}
+		else if (str_input[i] == '\'')
+		{
+			single_quote_flag = !single_quote_flag;
+		}
+		else if (str_input[i] == '\"')
+		{
+			quote_flag = !quote_flag;
+		}
+		i++;
+	}
+	return (0);
+}
+
+char	*read_input(char *flag_end_command)
+{
+	char	*str_input;
+	char	quote_flag;
+	char	single_quote_flag;
 	char	c;
 	int		result;
 
-	file_name = NULL;
-
-	//printf("SIGN = %c\n", sign);
-	while (read(0, &c, 1))
-		if (c != ' ')
-			break;
-	//file_name = str_plus_char(file_name, c);
-	//result = read(0, &c, 1);
-	if (c == '>')
+	quote_flag = 0;
+	single_quote_flag = 0;
+	str_input = NULL;
+	read(0, &c, 1);
+	while (c == ' ' || c == '\t')
+		read(0, &c, 1);
+	while (c != '\n' || quote_flag != 0 || single_quote_flag != 0)
 	{
-		sign = '2';
-		result = read(0, &c, 1);
-		while (c == ' ')
-			result = read(0, &c, 1);
+		str_input = str_plus_char(str_input, c);
+		if (c == '\\')
+		{
+			read(0, &c, 1);
+			str_input = str_plus_char(str_input, c);
+		}
+		else if (c == '"' && single_quote_flag == 0)
+			quote_flag = !quote_flag;
+		else if (c == '\'' && quote_flag == 0)
+			single_quote_flag = !single_quote_flag;
+		read(0, &c, 1);
 	}
-	while (result)
+	*flag_end_command = 1;
+	if (str_input == NULL || find_error(str_input))
 	{
-		if (c == '\n')
-			break;
-		else if (c == ' ' || c == ';' || c == '|')
-			break;
-		else if (c == '>' || c == '<')
-			break;
-		file_name = str_plus_char(file_name, c);
-		result = read(0, &c, 1);
+		free(str_input);
+		return (NULL);
 	}
-	if (sign == '2')
-	{
-		all->output = open(file_name, O_CREAT | O_RDWR | O_APPEND);
-		if (all->output == -1)
-			printf("ERROR OPENNING\n");
-	}
-	if (sign == '>')
-	{
-		all->output = open(file_name, O_CREAT | O_RDWR | O_TRUNC, S_IRWXU | S_IRWXG | S_IRWXO);
-		if (all->output == -1)
-			printf("ERROR OPENNING\n");
-	}
-	else if (sign == '<')
-	{
-		//printf("%s\n", file_name);
-		all->input = open(file_name, O_RDWR);	// изменить флаги открытия файла ??
-		if (all->input == -1)
-			printf("ERROR OPENNING\n");
-	}
-	return (c);
+	return (str_input);
 }
 
-char	*read_array(char *flag_end_command, t_all *all)
+char	*get_command(char *str_input, int *i, t_all *all)
 {
-	char	*array;
-	char	c;
-	char	result;
-	int		i = 0;
+	char	*command;
+	char	quote_flag;
+	char	single_quote_flag;
 
 	all->input = -1;
 	all->output = -1;
+//	close(all->input);
+//	close(all->output);
 
-	array = NULL;
-	result = read(0, &c, 1);
-	while (result)
+	command = NULL;
+	quote_flag = 0;
+	single_quote_flag = 0;
+	while (str_input[*i] != '\0')
 	{
-		//printf("C = \"%c\"\n", c);
-		if (c == '\n')
-		{
-			*flag_end_command = 1;
+		if (str_input[*i] == ';' && quote_flag == 0 && single_quote_flag == 0)
 			break;
-		}
-		else if (c == '\\')
+		else if (str_input[*i] == '\'')
+			single_quote_flag = !single_quote_flag;
+		else if (str_input[*i] == '\"')
+			quote_flag = !quote_flag;
+		else if (str_input[*i] == '\\')
 		{
-			result = read(0, &c, 1);
-			if (result == 1)
-			{
-				array = str_plus_char(array, c);
-				result = read(0, &c, 1);
-				continue;
-			}
-			else
-			{
-				array = str_plus_char(array, '\0');
-				break;
-			}
+			command = str_plus_char(command, str_input[*i]);
+			*i += 1;
 		}
-		else if (c == ';')
-			break;
-		else if (c == '|')
+		else if (str_input[*i] == '|' && quote_flag == 0 && single_quote_flag == 0)
 		{
 			if (all->pipe == -1)
 			{
@@ -156,113 +195,53 @@ char	*read_array(char *flag_end_command, t_all *all)
 			}
 			break;
 		}
-		else if (c == '>' || c == '<')
-		{
-			c = read_output_file(all, c);
-			continue;
-		}
-		array = str_plus_char(array, c);
-		i++;
-		result = read(0, &c, 1);
+		command = str_plus_char(command, str_input[*i]);
+		*i += 1;
 	}
-
-	return(array);
+	return (command);
 }
 
-int main (int argc, char **argv, char **envp)
+int		main (int argc, char **argv, char **envp)
 {
     t_all	all;
 	char	flag_end_command;
 	char	*array;
+	int		i;
+	char	*str_input;
 	
 	if (envp != NULL && envp[0] != NULL)	// Подумать над этим
 		make_copy_envp(&all, envp);
 	flag_end_command = 1;
-	
-
-	//all.output = -1;
-
 	while (1)
 	{
-		//write(all.standart_fd[1], "WHHHHHAT\n", 10);
+		i = 0;
 		if (flag_end_command == 1)
 		{
 			print_color_start(&all, 0);
 			flag_end_command = 0;
 		}
-
-		array = read_array(&flag_end_command, &all);
-//		printf("%s\n", array);
-		if (all.pipe == 1)
-		{
-			if (all.input != -1)
-				dup2(all.input, 0);
-			
-			if (all.output != -1)
-				dup2(all.output, 1);
-			else
-				dup2(all.pipefd[1], 1);
-		}
-		else if (all.pipe == 0)
-		{
-			if (all.input != -1)
-				dup2(all.input, 0);
-			else
-				dup2(all.pipefd[0], 0);
-			
-			if (all.output != -1)
-				dup2(all.output, 1);
-		}
-		else if (all.pipe == 2)
-		{
-			if (all.input != -1)
-				dup2(all.input, 0);
-			else
-				dup2(all.pipefd[0], 0);
-
-			if (all.output != -1)
-				dup2(all.output, 1);
-			else
-				dup2(all.pipefd_second[1], 1);
-		}
-		else if (all.pipe == -1)
-		{
-			if (all.input != -1)
-				dup2(all.input, 0);
-			if (all.output != -1)
-				dup2(all.output, 1);
-		}
-
-		division_command(&all, array);
 		
-		if (all.pipe == 1)
+		if ((str_input = read_input(&flag_end_command)) == NULL)
+			continue;
+		char	*str;
+		printf("str_input = |%s|\n", str_input);
+		while (str_input[i] != '\0')
 		{
-			all.pipe = 0;
-			close(all.pipefd[1]);
-		}
-		else if (all.pipe == 0)
-		{
-			all.pipe = -1;
-			close(all.pipefd[0]);
-		}
-		else if (all.pipe == 2)
-		{
-			close(all.pipefd[0]);
 
-			dup2(all.pipefd_second[0], all.pipefd[0]);
-			dup2(all.pipefd_second[1], all.pipefd[1]);
-			close(all.pipefd[1]);
-			close(all.pipefd_second[1]);
-			all.pipe = 0;
+			str = get_command(str_input, &i, &all);
+			if (str_input[i] != '\0')
+				i++;
+		//	printf("i = %d\n", i);
+		//	printf("all->pipe %d\n", all.pipe);
+			printf("str = |%s|\n", str);
+			division_command(&all, str);
 		}
-
-		dup2(all.standart_fd[0], 0);
-		dup2(all.standart_fd[1], 1);
-		dup2(all.standart_fd[2], 2);
-		close(all.input);
-		close(all.output);
-		all.input = -1;
-		all.output = -1;
+		/*
+		array = read_array(&flag_end_command, &all);
+		printf("array = |%s|\n", array);
+		printf("all->pipe %d\n", all.pipe);
+		division_command(&all, array);
+		*/
 	}
     return(0);
 }

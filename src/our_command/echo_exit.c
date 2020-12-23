@@ -7,7 +7,7 @@ void    ft_echo(t_all *all, char **arg) // -n!
     
     i = 1;
     n_flag = 0;
-    while (strcmp(arg[i], "-n") == 0)
+    while (arg[i] != NULL && strcmp(arg[i], "-n") == 0)
     {
         n_flag = 1;
         i++;

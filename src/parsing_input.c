@@ -54,6 +54,93 @@ char	*number_to_str(char *command, int status, t_all *all)
 	return (command);
 }
 
+void	redirect_file(t_all *all, int *i, char *str)
+{
+	char	*file_name;
+
+	file_name = NULL;
+	//while(str[*i] == ' ')
+	//	*i += 1;
+	if (str[*i] == '>')
+	{
+		*i += 1;
+	}
+	else if (str[*i] == '<')
+	{
+		printf("<\n");
+		*i += read_word(all, str + *i, &file_name, *i);
+		printf("file_name = |%s|\n", file_name);
+	}
+	/*
+	char	*file_name;
+	char	c;
+	int		result;
+
+	file_name = NULL;
+
+	//printf("SIGN = %c\n", sign);
+	while (read(0, &c, 1))
+		if (c != ' ')
+			break;
+			
+	//file_name = str_plus_char(file_name, c);
+	//result = read(0, &c, 1);
+	if (c == '>')
+	{
+		sign = '2';
+		result = read(0, &c, 1);
+		while (c == ' ')
+			result = read(0, &c, 1);
+	}
+	while (result)
+	{
+		if (c == '\n')
+			break;
+		else if (c == ' ' || c == ';' || c == '|')
+			break;
+		else if (c == '>' || c == '<')
+		{
+			//write(1, "bash: syntax error near unexpected token \'>\'\n", 45);
+			while (c != '\n')
+				read(0, &c, 1);
+			write(1, "bash: syntax error near unexpected token \'>\'\n", 45);
+			return (-1);
+			//break;
+		}
+		file_name = str_plus_char(file_name, c);
+		result = read(0, &c, 1);
+	}
+	if (file_name == NULL)
+	{
+		write(1, "bash: syntax error near unexpected token \'>\'\n", 45);
+		//while (c != '\n')
+		//	read(0, &c, 1);
+		return (-1);
+	}
+	if (sign == '2')
+	{
+		all->output = open(file_name, O_CREAT | O_APPEND | O_RDWR, S_IRWXU);
+		if (all->output == -1)
+			printf("ERROR OPENNING\n");
+	}
+	if (sign == '>')
+	{
+		all->output = open(file_name, O_CREAT | O_RDWR | O_TRUNC, S_IRWXU);
+		if (all->output == -1)
+			printf("ERROR OPENNING\n");
+	}
+	else if (sign == '<')
+	{
+		//printf("%s\n", file_name);
+		all->input = open(file_name, O_RDWR);	// изменить флаги открытия файла ??
+		if (all->input == -1)
+			printf("ERROR OPENNING\n");
+	}
+	return (c);
+	*/
+	
+}
+
 /*
 	Функция чтения слова / слов в ковычках. Сохраняет аргумент в **command.
 	Возвращает индекс текущего элемента.
@@ -62,17 +149,17 @@ int		read_word(t_all *all, char *array, char **command, int i)
 {
 	char	quote_flag;			// Если найдена ковычка = 1
 	char	single_quote_flag;
-	char	c;
+	//char	c;
 
 	quote_flag = 0;
 	single_quote_flag = 0;
 	while (array[i] == ' ' || array[i] == '\t')
 		i++;
+	//printf("array = |%s|\n", array);
 	while (array[i] != '\0')
 	{
-		if (array[i] == '\'' || single_quote_flag == 1)
+		if ((array[i] == '\'' || single_quote_flag == 1) && quote_flag == 0)
 		{
-			//dprintf(all->standart_fd[1], "single_quote_flag = \"%d\"\n", single_quote_flag);
 			if (array[i] == '\'')
 			{
 				single_quote_flag = !single_quote_flag;
@@ -84,96 +171,77 @@ int		read_word(t_all *all, char *array, char **command, int i)
 		}
 		else if (array[i] == '$')
     	{
-	      if (array[i + 1] == '?')
-	      {
-	        *command = number_to_str(*command, all->status, all);
-	        i += 2;
-	        continue;
-      }
-		else
-		{
-			char  *name;
-			int    j;
+			if (array[i + 1] == '?')
+			{
+					*command = number_to_str(*command, all->status, all);
+					i += 2;
+					continue;
+			}
+			else
+			{
+				char  *name;
+				int    j;
 
-			name = NULL;
-			j = i + 1;
-			write(all->standart_fd[1], "TEST\n", 5);
-			while (ft_isalnum(array[j]))
-			{
-			name = str_plus_char(name, array[j]);
-			j++;
-			if (name[0] >= '0' && name[0] <= '9')
-			{
-				i = j;
-				continue;
+				name = NULL;
+				j = i + 1;
+				while (ft_isalnum(array[j]))
+				{
+					name = str_plus_char(name, array[j]);
+					j++;
+					if (name[0] >= '0' && name[0] <= '9')
+					{
+						i = j;
+						continue;
+					}
+				}
+				if (name != NULL)
+				{
+					char  *str;
+					str = search_var(all, name);
+					if (*command == NULL)
+						*command = ft_strjoin("", search_var(all, name));
+					else
+						*command = ft_strjoin(*command, search_var(all, name));
+				
+				}
+				if (array[j] == '$' && i != j)
+				{
+					i = j;
+					continue;
+				}
+				if (array[j] != ' ' && array[j] != '\0')
+				{
+					i = j;
+					continue;
+				}
+				else
+					i = j;
 			}
-			
-			}
-			//read_word(all, array, &name, j);
-//			dprintf(all->standart_fd[1], "name = \"%s\"\n", name);
-			if (name != NULL)
-			{
-			char  *str;
-			str = search_var(all, name);
-			if (*command == NULL)
-				*command = ft_strjoin("", search_var(all, name));
-			else
-				*command = ft_strjoin(*command, search_var(all, name));
-//			dprintf(all->standart_fd[1], "str = \"%s\"\n", *command);
-			
-			}
-			if (array[j] == '$' && i != j)
-			{
-			i = j;
-			continue;
-			}
-			if (array[j] != ' ' && array[j] != '\0')
-			{
-//			dprintf(all->standart_fd[1], "array[j] = \"%c\"\n", array[j]);
-			i = j;
-			continue;
-			//i -= 1;
-			}
-			else
-			i = j;
 		}
-		}
-		else if (array[i] == '\"')
+		else if (array[i] == '\"' && single_quote_flag == 0)
 		{
 			quote_flag = !quote_flag;
 			i++;
 			continue;
 		}
-/*		else if (array[i] == '\\')
-		{
-			if (array[i + 1] != '\0')
-			{
-				*command = str_plus_char(*command, array[i + 1]);
-				i += 2;
-			}
-			else
-			{
-				while (read(all->standart_fd[1], &c, 1))
-				{
-					if (c == '\n')
-						break;
-					*command = str_plus_char(*command, c);
-					i += 1;
-
-				}
-			}
-			//i += 2;
-			continue;
-		} */
 		else if (array[i] == ' ' && quote_flag == 0)
 		{
 			if (*command == NULL)
 				*command = str_plus_char(NULL, '\0');
 			break;
 		}
+		else if (array[i] == '\\' && single_quote_flag == 0 && quote_flag == 0)
+			i++;
+		else if ((array[i] == '>' || array[i] == '<') && single_quote_flag == 0 && quote_flag == 0)
+		{
+			//printf("<><><>\n");
+			redirect_file(all, &i, array);
+			continue;
+		}
 		*command = str_plus_char(*command, array[i]);
 		i++;
 	}
+	//printf("command = %s\n", *command);
 	return (i);
 }
 
@@ -227,8 +295,9 @@ char	**read_arg(t_all *all, char *array, int *i)
 	while (j < len)
 	{	
 		arg[j] = NULL;
-		*i = read_word(all, array, &arg[j], *i);
-	//	dprintf(all->standart_fd[1], "ARG = \"%s\"\n", arg[j]);
+		*i += read_word(all, array, &arg[j], *i);
+		//if (arg[j] != NULL)
+			//printf("STR = %s\n", arg[j]);
 		j++;
 	}
 	arg[j] = NULL;
