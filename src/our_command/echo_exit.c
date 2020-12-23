@@ -47,7 +47,7 @@ void		ft_echo(t_all *all, char **arg)
 
 	i = 1;
 	n_flag = 0;
-	while (ft_strcmp(arg[i], "-n") == 0)
+	while (arg[i] != NULL && ft_strcmp(arg[i], "-n") == 0)
 	{
 		n_flag = 1;
 		i++;

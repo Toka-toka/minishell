@@ -17,7 +17,8 @@ NAME = minishell
 SRC = 	src/main.c\
 		src/parsing_input.c\
 		src/color_start.c\
-		src/launch.c\
+		src/run_manager.c\
+		src/check_way.c\
 		src/fork_create.c\
 		src/our_command/echo_exit.c\
 		src/our_command/export.c\
