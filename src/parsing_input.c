@@ -61,15 +61,30 @@ void	redirect_file(t_all *all, int *i, char *str)
 	file_name = NULL;
 	//while(str[*i] == ' ')
 	//	*i += 1;
-	if (str[*i] == '>')
+	*i += 1;
+	if (str[*i - 1] == '>')
 	{
-		*i += 1;
+		if (str[*i] == '>')
+		{
+			*i += 1;
+			*i = read_word(all, str, &file_name, *i);
+			all->output = open(file_name, O_CREAT | O_APPEND | O_RDWR, S_IRWXU);
+		}
+		else
+		{
+			*i = read_word(all, str, &file_name, *i);
+			//printf("file_name %s\n", file_name);
+			all->output = open(file_name, O_CREAT | O_RDWR | O_TRUNC, S_IRWXU);
+		}
+		if (all->output == -1)
+			printf("ERROR OPENNING\n");
 	}
-	else if (str[*i] == '<')
+	else if (str[*i - 1] == '<')
 	{
-		printf("<\n");
-		*i += read_word(all, str + *i, &file_name, *i);
-		printf("file_name = |%s|\n", file_name);
+		*i = read_word(all, str, &file_name, *i);
+		all->input = open(file_name, O_RDWR);	// изменить флаги открытия файла ??
+		if (all->input == -1)
+			printf("ERROR OPENNING\n");
 	}
 	/*
 	char	*file_name;
@@ -198,11 +213,15 @@ int		read_word(t_all *all, char *array, char **command, int i)
 				{
 					char  *str;
 					str = search_var(all, name);
+					//printf("|%s|\n", str);
 					if (*command == NULL)
 						*command = ft_strjoin("", search_var(all, name));
 					else
 						*command = ft_strjoin(*command, search_var(all, name));
-				
+					
+				//	if (array[j] == '\0')
+				//		break;
+					//printf("*command = |%s|\n", *command);
 				}
 				if (array[j] == '$' && i != j)
 				{
@@ -216,6 +235,8 @@ int		read_word(t_all *all, char *array, char **command, int i)
 				}
 				else
 					i = j;
+
+				
 			}
 		}
 		else if (array[i] == '\"' && single_quote_flag == 0)
@@ -230,16 +251,16 @@ int		read_word(t_all *all, char *array, char **command, int i)
 				*command = str_plus_char(NULL, '\0');
 			break;
 		}
-		else if (array[i] == '\\' && single_quote_flag == 0 && quote_flag == 0)
+		else if (array[i] == '\\' && single_quote_flag == 0)
 			i++;
 		else if ((array[i] == '>' || array[i] == '<') && single_quote_flag == 0 && quote_flag == 0)
 		{
-			//printf("<><><>\n");
 			redirect_file(all, &i, array);
 			continue;
 		}
 		*command = str_plus_char(*command, array[i]);
-		i++;
+		if (array[i] != '\0')
+			i++;
 	}
 	//printf("command = %s\n", *command);
 	return (i);
@@ -295,7 +316,7 @@ char	**read_arg(t_all *all, char *array, int *i)
 	while (j < len)
 	{	
 		arg[j] = NULL;
-		*i += read_word(all, array, &arg[j], *i);
+		*i = read_word(all, array, &arg[j], *i);
 		//if (arg[j] != NULL)
 			//printf("STR = %s\n", arg[j]);
 		j++;

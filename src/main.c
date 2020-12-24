@@ -224,7 +224,7 @@ int		main (int argc, char **argv, char **envp)
 		if ((str_input = read_input(&flag_end_command)) == NULL)
 			continue;
 		char	*str;
-		printf("str_input = |%s|\n", str_input);
+	//	printf("str_input = |%s|\n", str_input);
 		while (str_input[i] != '\0')
 		{
 
@@ -233,7 +233,7 @@ int		main (int argc, char **argv, char **envp)
 				i++;
 		//	printf("i = %d\n", i);
 		//	printf("all->pipe %d\n", all.pipe);
-			printf("str = |%s|\n", str);
+	//		printf("str = |%s|\n", str);
 			division_command(&all, str);
 		}
 		/*
