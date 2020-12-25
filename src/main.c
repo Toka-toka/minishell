@@ -117,39 +117,31 @@ char	find_error(char *str_input)
 	return (0);
 }
 
-char	*read_input(char *flag_end_command)
+char	*read_input(void)
 {
 	char	*str_input;
+	char	c;
 	char	quote_flag;
 	char	single_quote_flag;
-	char	c;
-	int		result;
 
 	quote_flag = 0;
 	single_quote_flag = 0;
 	str_input = NULL;
-	read(0, &c, 1);
+	if (read(0, &c, 1) == 0 && str_input == NULL)
+		exit(1);
 	while (c == ' ' || c == '\t')
 		read(0, &c, 1);
 	while (c != '\n' || quote_flag != 0 || single_quote_flag != 0)
 	{
 		str_input = str_plus_char(str_input, c);
-		if (c == '\\')
-		{
-			read(0, &c, 1);
+		if (c == '\\' && read(0, &c, 1))
 			str_input = str_plus_char(str_input, c);
-		}
 		else if (c == '"' && single_quote_flag == 0)
 			quote_flag = !quote_flag;
 		else if (c == '\'' && quote_flag == 0)
 			single_quote_flag = !single_quote_flag;
-		read(0, &c, 1);
-	}
-	*flag_end_command = 1;
-	if (str_input == NULL || find_error(str_input))
-	{
-		free(str_input);
-		return (NULL);
+		while (read(0, &c, 1) == 0)
+			;
 	}
 	return (str_input);
 }
@@ -198,50 +190,39 @@ char	*get_command(char *str_input, int *i, t_all *all)
 		command = str_plus_char(command, str_input[*i]);
 		*i += 1;
 	}
+	if (str_input[*i] != '\0')
+		*i += 1;
 	return (command);
 }
 
 int		main (int argc, char **argv, char **envp)
 {
     t_all	all;
-	char	flag_end_command;
-	char	*array;
 	int		i;
 	char	*str_input;
-	
-	if (envp != NULL && envp[0] != NULL)	// Подумать над этим
+	char	*str;
+
+	if (envp != NULL && envp[0] != NULL)	// Подумать над этим. 			Над чем подумать?
 		make_copy_envp(&all, envp);
-	flag_end_command = 1;
 	while (1)
 	{
 		i = 0;
-		if (flag_end_command == 1)
+		print_color_start(&all, 0);
+		str_input = read_input();
+		if (str_input == NULL || find_error(str_input))
 		{
-			print_color_start(&all, 0);
-			flag_end_command = 0;
-		}
-		
-		if ((str_input = read_input(&flag_end_command)) == NULL)
+			free(str_input);
 			continue;
-		char	*str;
-	//	printf("str_input = |%s|\n", str_input);
+		}
 		while (str_input[i] != '\0')
 		{
-
 			str = get_command(str_input, &i, &all);
-			if (str_input[i] != '\0')
-				i++;
-		//	printf("i = %d\n", i);
-		//	printf("all->pipe %d\n", all.pipe);
-	//		printf("str = |%s|\n", str);
+			//if (str_input[i] != '\0')
+			//	i++;
 			division_command(&all, str);
+			free(str);
 		}
-		/*
-		array = read_array(&flag_end_command, &all);
-		printf("array = |%s|\n", array);
-		printf("all->pipe %d\n", all.pipe);
-		division_command(&all, array);
-		*/
+		free(str_input);
 	}
     return(0);
 }

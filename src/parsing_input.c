@@ -59,8 +59,6 @@ void	redirect_file(t_all *all, int *i, char *str)
 	char	*file_name;
 
 	file_name = NULL;
-	//while(str[*i] == ' ')
-	//	*i += 1;
 	*i += 1;
 	if (str[*i - 1] == '>')
 	{
@@ -73,11 +71,10 @@ void	redirect_file(t_all *all, int *i, char *str)
 		else
 		{
 			*i = read_word(all, str, &file_name, *i);
-			//printf("file_name %s\n", file_name);
 			all->output = open(file_name, O_CREAT | O_RDWR | O_TRUNC, S_IRWXU);
 		}
 		if (all->output == -1)
-			printf("ERROR OPENNING\n");
+			printf("ERROR OPENNING\n");		// Обработать ошибку
 	}
 	else if (str[*i - 1] == '<')
 	{
@@ -86,74 +83,29 @@ void	redirect_file(t_all *all, int *i, char *str)
 		if (all->input == -1)
 			printf("ERROR OPENNING\n");
 	}
-	/*
-	char	*file_name;
-	char	c;
-	int		result;
+}
 
-	file_name = NULL;
+char	*str_plus_str(char *src, char *dest)
+{
+	int		i;
+	int		len;
+	char	*str;
 
-	//printf("SIGN = %c\n", sign);
-	while (read(0, &c, 1))
-		if (c != ' ')
-			break;
-			
-	//file_name = str_plus_char(file_name, c);
-	//result = read(0, &c, 1);
-	if (c == '>')
-	{
-		sign = '2';
-		result = read(0, &c, 1);
-		while (c == ' ')
-			result = read(0, &c, 1);
-	}
-	while (result)
-	{
-		if (c == '\n')
-			break;
-		else if (c == ' ' || c == ';' || c == '|')
-			break;
-		else if (c == '>' || c == '<')
-		{
-			//write(1, "bash: syntax error near unexpected token \'>\'\n", 45);
-			while (c != '\n')
-				read(0, &c, 1);
-			write(1, "bash: syntax error near unexpected token \'>\'\n", 45);
-			return (-1);
-			//break;
-		}
-		file_name = str_plus_char(file_name, c);
-		result = read(0, &c, 1);
-	}
-	if (file_name == NULL)
-	{
-		write(1, "bash: syntax error near unexpected token \'>\'\n", 45);
-		//while (c != '\n')
-		//	read(0, &c, 1);
-		return (-1);
-	}
-	if (sign == '2')
-	{
-		all->output = open(file_name, O_CREAT | O_APPEND | O_RDWR, S_IRWXU);
-		if (all->output == -1)
-			printf("ERROR OPENNING\n");
-	}
-	if (sign == '>')
-	{
-		all->output = open(file_name, O_CREAT | O_RDWR | O_TRUNC, S_IRWXU);
-		if (all->output == -1)
-			printf("ERROR OPENNING\n");
-	}
-	else if (sign == '<')
-	{
-		//printf("%s\n", file_name);
-		all->input = open(file_name, O_RDWR);	// изменить флаги открытия файла ??
-		if (all->input == -1)
-			printf("ERROR OPENNING\n");
-	}
-	return (c);
-	*/
-	
+	if (src == NULL && dest == NULL)
+		return (NULL);
+	len = 1;
+	if (src != NULL)
+		len += ft_strlen(src);
+	if (dest != NULL)
+		len += ft_strlen;
+	str = (char *)malloc(len);
+	if (str == NULL)
+		return (NULL);
+	if (src != NULL)
+		str = strcat(str, src);
+	if (dest != NULL)
+		str = strcat(str, dest);
+	return(str);
 }
 
 /*
@@ -164,13 +116,11 @@ int		read_word(t_all *all, char *array, char **command, int i)
 {
 	char	quote_flag;			// Если найдена ковычка = 1
 	char	single_quote_flag;
-	//char	c;
 
 	quote_flag = 0;
 	single_quote_flag = 0;
 	while (array[i] == ' ' || array[i] == '\t')
 		i++;
-	//printf("array = |%s|\n", array);
 	while (array[i] != '\0')
 	{
 		if ((array[i] == '\'' || single_quote_flag == 1) && quote_flag == 0)
@@ -212,16 +162,11 @@ int		read_word(t_all *all, char *array, char **command, int i)
 				if (name != NULL)
 				{
 					char  *str;
-					str = search_var(all, name);
-					//printf("|%s|\n", str);
+					//str = search_var(all, name);
 					if (*command == NULL)
-						*command = ft_strjoin("", search_var(all, name));
+						*command = search_var(all, name);
 					else
-						*command = ft_strjoin(*command, search_var(all, name));
-					
-				//	if (array[j] == '\0')
-				//		break;
-					//printf("*command = |%s|\n", *command);
+						*command = str_plus_str(*command, search_var(all, name));
 				}
 				if (array[j] == '$' && i != j)
 				{
@@ -283,18 +228,15 @@ int		number_word(char *array, int i)
 	{
 		if (array[i] == '\"')
 			arg_flag = !arg_flag;
-		//if 
 		if (array[i] != ' ' && arg_flag != 1)
 		{
 			if (word_flag != 0)
 				number += 1;
-			//word_flag = 0;
 		}
 		else
 			word_flag = 1;
 		i++;
 	}
-	//printf("ALL NUMBER ARG = %d\n", number);
 	return (number);
 }
 
@@ -309,7 +251,6 @@ char	**read_arg(t_all *all, char *array, int *i)
 
 	len = number_word(array, *i);					// Не работает с | и ;
 	arg = (char **)malloc((len + 1) * sizeof(char *));
-//	dprintf(all->standart_fd[1], "LEn = %d", len);
 	if (arg == NULL)
 		return (NULL);
 	j = 0;
@@ -317,8 +258,6 @@ char	**read_arg(t_all *all, char *array, int *i)
 	{	
 		arg[j] = NULL;
 		*i = read_word(all, array, &arg[j], *i);
-		//if (arg[j] != NULL)
-			//printf("STR = %s\n", arg[j]);
 		j++;
 	}
 	arg[j] = NULL;

@@ -70,11 +70,9 @@ void	division_command(t_all *all, char *array)
 	read_word(all, array, &command, i);
 	arg = read_arg(all, array, &i);			// поправить передаваемые значения
 
-	//command = echo;
-	
 	output_fd = all->standart_fd[1];
 	input_fd = all->standart_fd[0];
-	//printf("!!!!!\n");
+
 	pipe_before_command(all, &output_fd, &input_fd);
 	dup2(output_fd, 1);
 	dup2(input_fd, 0);
