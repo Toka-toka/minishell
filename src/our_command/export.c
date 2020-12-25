@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sedric <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: white <white@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/08 22:02:48 by sedric            #+#    #+#             */
-/*   Updated: 2020/12/08 22:02:49 by sedric           ###   ########.fr       */
+/*   Updated: 2020/12/25 18:59:23 by white            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-t_envp		*create_var(char *str)
+t_envp		*create_var(const char *str)
 {
 	int		i;
 	t_envp	*new;

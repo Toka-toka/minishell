@@ -20,7 +20,7 @@ typedef struct      s_envp
 {
     char            *name;
     char            *value;
-    char            *prinf_flag;
+    char            prinf_flag;
     struct s_envp   *next;
 }                   t_envp;
 
@@ -58,6 +58,7 @@ void	fork_create(t_all *all, char *path, char **arg,
 void	*check_way(t_all *all, char *command, char **path);
 void		critical_error(char *function, char *arg, char *err);
 void		run_manager(t_all *all, char **arg, char *command);
+int			var_name_check(char *name, int j);
 
 void	print_color_start(t_all *all, int sig);
 char	*read_array(char *flag_end_command, t_all *all);

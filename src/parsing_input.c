@@ -9,7 +9,10 @@ char	*str_plus_char(char *src, char c)
 	if (src != NULL)
 	{
 		if ((dest = (char *)malloc(ft_strlen(src) + 2)) == NULL)
+		{
+			free(src);
 			return (NULL);
+		}
 		while (src[i] != '\0')
 		{
 			dest[i] = src[i];
@@ -18,9 +21,13 @@ char	*str_plus_char(char *src, char c)
 	}
 	else
 		if ((dest = (char *)malloc(2)) == NULL)
+		{
+			free(src);
 			return (NULL);
+		}
 	dest[i] = c;
 	dest[i + 1] = '\0';
+	free(src);
 	return (dest);
 }
 
@@ -97,7 +104,7 @@ char	*str_plus_str(char *src, char *dest)
 	if (src != NULL)
 		len += ft_strlen(src);
 	if (dest != NULL)
-		len += ft_strlen;
+		len += ft_strlen(dest);
 	str = (char *)malloc(len);
 	if (str == NULL)
 		return (NULL);
@@ -192,8 +199,8 @@ int		read_word(t_all *all, char *array, char **command, int i)
 		}
 		else if (array[i] == ' ' && quote_flag == 0)
 		{
-			if (*command == NULL)
-				*command = str_plus_char(NULL, '\0');
+			//if (*command == NULL)
+			//	*command = str_plus_char(NULL, '\0');
 			break;
 		}
 		else if (array[i] == '\\' && single_quote_flag == 0)
@@ -201,6 +208,7 @@ int		read_word(t_all *all, char *array, char **command, int i)
 		else if ((array[i] == '>' || array[i] == '<') && single_quote_flag == 0 && quote_flag == 0)
 		{
 			redirect_file(all, &i, array);
+//			printf("command = |%s|\n", *command);
 			continue;
 		}
 		*command = str_plus_char(*command, array[i]);
@@ -258,6 +266,8 @@ char	**read_arg(t_all *all, char *array, int *i)
 	{	
 		arg[j] = NULL;
 		*i = read_word(all, array, &arg[j], *i);
+//		if (arg[j] != NULL)
+//			printf("ARG = |%s|\n", arg[j]);
 		j++;
 	}
 	arg[j] = NULL;

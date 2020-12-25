@@ -23,12 +23,19 @@ void	print_color_start(t_all *all, int sig)
 		temp = all;
 	if (sig == SIGQUIT && temp->fork == 0)
 	{
-		sleep(1);
-		write(0, "\b\b", 2);
-		sleep(1);
-		write(0, "  ", 2);
-		sleep(1);
-		write(0, "\b\b", 2);
+		char	*str[3] = {0};
+		//printf("IN COLOR\n");
+		
+		//sleep(1);
+		write(1, "\b\b  \b\b", 6);
+//		sleep(1);
+//		write(1, "  ", 2);
+//		sleep(1);
+//		write(1, "\b\b", 2);
+		//read(0, str, 2);
+		//printf("STR IN PRINT = %s\n", str);
+		//printf("STR IN PRINT = %s\n", str);
+
 	}
 	if (sig != 0 && temp->fork == 0 && sig != SIGQUIT)
 		write(0, "\n", 1);

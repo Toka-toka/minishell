@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   echo_exit.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sedric <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: white <white@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/08 22:02:38 by sedric            #+#    #+#             */
-/*   Updated: 2020/12/08 22:02:40 by sedric           ###   ########.fr       */
+/*   Updated: 2020/12/25 19:04:23 by white            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ void		ft_exit(t_all *all, char **arg)
 	int				i;
 
 	i = 0;
-	if (arg[1] == NULL)
+	if (arg == NULL || arg[1] == NULL)
 		status = 0;
 	else if (arg[1] != NULL && (ckeck_exit_arg(arg[1]) == 1))
 	{

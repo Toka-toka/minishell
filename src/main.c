@@ -46,9 +46,8 @@ void	**make_copy_envp(t_all *all, char **envp)
 	all->pipe = -1;
 	all->fork = 0;
 	all->status = 0;
-//	signal(SIGINT, &fn);
-//	signal(SIGQUIT, &fn);
-//	signal(SIGTSTP, &fn);
+	signal(SIGINT, &fn);
+	signal(SIGQUIT, &fn);
 }
 
 char	print_error(char *sumbol)
@@ -117,18 +116,19 @@ char	find_error(char *str_input)
 	return (0);
 }
 
-char	*read_input(void)
+char	*read_input(t_all *all)
 {
-	char	*str_input;
+	static char	*str_input;
 	char	c;
 	char	quote_flag;
 	char	single_quote_flag;
+
 
 	quote_flag = 0;
 	single_quote_flag = 0;
 	str_input = NULL;
 	if (read(0, &c, 1) == 0 && str_input == NULL)
-		exit(1);
+		ft_exit(all, NULL);
 	while (c == ' ' || c == '\t')
 		read(0, &c, 1);
 	while (c != '\n' || quote_flag != 0 || single_quote_flag != 0)
@@ -140,8 +140,7 @@ char	*read_input(void)
 			quote_flag = !quote_flag;
 		else if (c == '\'' && quote_flag == 0)
 			single_quote_flag = !single_quote_flag;
-		while (read(0, &c, 1) == 0)
-			;
+		read(0, &c, 1);
 	}
 	return (str_input);
 }
@@ -208,7 +207,7 @@ int		main (int argc, char **argv, char **envp)
 	{
 		i = 0;
 		print_color_start(&all, 0);
-		str_input = read_input();
+		str_input = read_input(&all);
 		if (str_input == NULL || find_error(str_input))
 		{
 			free(str_input);
