@@ -6,11 +6,11 @@
 #    By: white <white@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/05/14 17:29:46 by sedric            #+#    #+#              #
-#    Updated: 2020/11/15 03:25:05 by white            ###   ########.fr        #
+#    Updated: 2021/01/04 21:08:00 by white            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-#FLAGS = -Wall -Wextra -Werror
+FLAGS = -Wall -Wextra -Werror
 
 NAME = minishell
 
@@ -21,6 +21,10 @@ SRC = 	src/main.c\
 		src/check_way.c\
 		src/fork_create.c\
 		src/launch.c\
+		src/find_error.c\
+		src/free_func.c\
+		src/read_echo_and_redirect.c\
+		src/our_standart_func.c\
 		src/our_command/echo_exit.c\
 		src/our_command/export.c\
 		src/our_command/pwd_cd.c\

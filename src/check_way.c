@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   check_way.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: white <white@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/01/03 06:33:49 by white             #+#    #+#             */
+/*   Updated: 2021/01/04 03:10:09 by white            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/minishell.h"
 
 char		**check_way3(t_all *all)
@@ -48,9 +60,8 @@ char		*check_way2(t_all *all, char *command)
 	return (path);
 }
 
-void		*check_way(t_all *all, char *command, char **path)
+void		check_way(t_all *all, char *command, char **path)
 {
-	int		i;
 	DIR		*dirp;
 
 	*path = check_way2(all, command);

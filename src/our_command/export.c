@@ -6,7 +6,7 @@
 /*   By: white <white@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/08 22:02:48 by sedric            #+#    #+#             */
-/*   Updated: 2020/12/25 18:59:23 by white            ###   ########.fr       */
+/*   Updated: 2021/01/04 02:45:03 by white            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ t_envp		*create_var(const char *str)
 	return (new);
 }
 
-void		add_var(t_all *all, const char *str, int i)
+void		add_var(t_all *all, const char *str)
 {
 	t_envp	*current;
 	t_envp	*new;
@@ -60,7 +60,7 @@ void		add_var(t_all *all, const char *str, int i)
 	}
 }
 
-void		print_sort_envp(t_all *all, t_envp *current, int len_max)
+void		print_sort_envp(t_envp *current, int len_max)
 {
 	t_envp	*max;
 	int		symb_max;
@@ -92,7 +92,7 @@ void		print_sort_envp(t_all *all, t_envp *current, int len_max)
 void		sort_envp(t_all *all)
 {
 	t_envp	*temp;
-	int		len_max;
+	size_t	len_max;
 
 	len_max = 0;
 	temp = all->envp;
@@ -109,7 +109,7 @@ void		sort_envp(t_all *all)
 		if (temp->prinf_flag == 1)
 			temp = temp->next;
 		else
-			print_sort_envp(all, temp, len_max);
+			print_sort_envp(temp, len_max);
 	}
 }
 
@@ -128,7 +128,7 @@ void		ft_export(t_all *all, char **arg)
 			if ((all->status = var_name_check(arg[i], 1)) == 1)
 				print_err("export", arg[1], "not a valid identifier");
 			else
-				add_var(all, arg[i], 0);
+				add_var(all, arg[i]);
 			i++;
 		}
 	}

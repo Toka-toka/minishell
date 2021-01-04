@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unset_env.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sedric <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: white <white@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/08 22:03:20 by sedric            #+#    #+#             */
-/*   Updated: 2020/12/08 22:03:22 by sedric           ###   ########.fr       */
+/*   Updated: 2021/01/04 02:39:07 by white            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 char		*search_var(t_all *all, char *name)
 {
 	t_envp	*current;
-	char	*temp;
 	int		len;
 
 	len = ft_strlen(name);
@@ -56,7 +55,6 @@ void		del_var(t_all *all, char *name)
 {
 	t_envp	*current;
 	t_envp	*prev;
-	int		len;
 	char	*temp;
 
 	current = all->envp;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pwd_cd.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sedric <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: white <white@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/08 22:02:54 by sedric            #+#    #+#             */
-/*   Updated: 2020/12/08 22:03:14 by sedric           ###   ########.fr       */
+/*   Updated: 2021/01/04 02:40:36 by white            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ void		ft_pwd(t_all *all, char **arg)
 {
 	char	*path;
 
+	if (arg == NULL)
+		arg = NULL;
 	path = getcwd(NULL, 0);
 	if (path != NULL)
 	{

@@ -1,9 +1,44 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   color_start.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: white <white@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/01/03 06:33:56 by white             #+#    #+#             */
+/*   Updated: 2021/01/04 21:02:32 by white            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/minishell.h"
 
-/*
-	По-факту оставил твой код, лишь убрал лишние переменные и засуну все в одну функцию,
-	т.к. действие выполниют одно.
-*/
+void	fn(int sig)
+{
+	print_color_start(NULL, sig);
+}
+
+void	make_copy_envp(t_all *all, char **envp)
+{
+	int i;
+
+	i = 0;
+	all->envp = NULL;
+	while (envp[i] != NULL)
+	{
+		add_var(all, envp[i]);
+		i++;
+	}
+	all->standart_fd[0] = dup(0);
+	all->standart_fd[1] = dup(1);
+	all->input = -1;
+	all->output = -1;
+	all->pipe = -1;
+	all->fork = 0;
+	all->status = 0;
+	signal(SIGINT, &fn);
+	signal(SIGQUIT, &fn);
+}
+
 void	print_used_or_dir(t_all *all, char *src)
 {
 	char	*name;
@@ -21,46 +56,24 @@ void	print_color_start(t_all *all, int sig)
 
 	if (temp == NULL)
 		temp = all;
+	temp->pipe = -1;
 	if (sig == SIGQUIT && temp->fork == 0)
-	{
-		char	*str[3] = {0};
-		//printf("IN COLOR\n");
-		
-		//sleep(1);
 		write(1, "\b\b  \b\b", 6);
-//		sleep(1);
-//		write(1, "  ", 2);
-//		sleep(1);
-//		write(1, "\b\b", 2);
-		//read(0, str, 2);
-		//printf("STR IN PRINT = %s\n", str);
-		//printf("STR IN PRINT = %s\n", str);
-
-	}
 	if (sig != 0 && temp->fork == 0 && sig != SIGQUIT)
 		write(0, "\n", 1);
 	if (temp->fork == 0 && (sig == SIGINT || sig == 0))
 	{
-		write(0, "\033[1;31m", 7);			// Red
-		write(0, "┌─[", 7);
-		write(0, "\033[1;34m", 7);			// Blue
-		print_used_or_dir(temp, "USERNAME");					// Поправил печать имени пользователя
-		write(0, "\033[1;31m", 7);			// Red
-		write(0, "]-[", 3);
-		write(0, "\033[1;34m", 7);			// Blue
-		print_used_or_dir(temp, "PWD");					// Поправил печать директории
-		write(0, "\033[1;31m", 7);			// Red
+		write(0, "\033[1;31m┌─[\033[1;34m", 21);
+		print_used_or_dir(temp, "USERNAME");
+		write(0, "\033[1;31m]-[\033[1;34m", 17);
+		print_used_or_dir(temp, "PWD");
+		write(0, "\033[1;31m", 7);
 		write(0, "]\n", 2);
 		write(0, "└──╼ ", 14);
-		write(0, "\033[1;33m", 7);			// Yellow
+		write(0, "\033[1;33m", 7);
 		write(0, "$", 1);
-		write(0, "\033[0m", 4);				// Reset
+		write(0, "\033[0m", 4);
 		if (sig == SIGINT)
 			temp->status = 130;
 	}
-//	if (temp->fork == 0 && sig == SIGQUIT)
-//	{
-//		write(0, "Hello\n", 6);
-//		write(0, "\b\b  \b\b", 6);
-//	}
 }

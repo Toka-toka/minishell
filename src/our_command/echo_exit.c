@@ -6,7 +6,7 @@
 /*   By: white <white@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/08 22:02:38 by sedric            #+#    #+#             */
-/*   Updated: 2020/12/25 19:04:23 by white            ###   ########.fr       */
+/*   Updated: 2021/01/04 02:41:22 by white            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,9 +81,7 @@ int			ckeck_exit_arg(char *str)
 void		ft_exit(t_all *all, char **arg)
 {
 	unsigned char	status;
-	int				i;
 
-	i = 0;
 	if (arg == NULL || arg[1] == NULL)
 		status = 0;
 	else if (arg[1] != NULL && (ckeck_exit_arg(arg[1]) == 1))

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   run_manager.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: white <white@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/01/03 06:33:06 by white             #+#    #+#             */
+/*   Updated: 2021/01/04 03:11:12 by white            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/minishell.h"
 
 char		*check_file(t_all *all, char *command)
@@ -15,7 +27,7 @@ char		*check_file(t_all *all, char *command)
 		all->status = 127;
 		return (NULL);
 	}
-	if (dirp = opendir(command))
+	if ((dirp = opendir(command)))
 	{
 		closedir(dirp);
 		ft_putstr_fd(command, 2);
@@ -51,19 +63,19 @@ int			our_command(char *command,
 	return (i);
 }
 
-void		run_manager(t_all *all, char **arg, char *command)
+void		run_manager(t_all *all, char **arg)
 {
 	void	(*function)(t_all *all, char **arg);
 	char	*path;
 
 	all->status = 0;
 	function = NULL;
-	if (command[0] == '.' || command[0] == '/')
-		path = check_file(all, command);
-	else if (our_command(command, &function) == 0)
+	if (arg[0][0] == '.' || arg[0][0] == '/')
+		path = check_file(all, arg[0]);
+	else if (our_command(arg[0], &function) == 0)
 		path = NULL;
 	else
-		check_way(all, command, &path);
+		check_way(all, arg[0], &path);
 	if (function != NULL && all->pipe == -1)
 		function(all, arg);
 	else if ((function != NULL && all->pipe > -1) || path != NULL)
